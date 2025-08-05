@@ -23,6 +23,7 @@ interface TransferData {
   currency: string;
   transactionStatus: string;
   startingPercentage: string;
+  transactionId: string;
 }
 
 const banks = [
@@ -56,7 +57,8 @@ const Index = () => {
     amount: '',
     currency: 'RM',
     transactionStatus: '',
-    startingPercentage: ''
+    startingPercentage: '',
+    transactionId: ''
   });
 
   const handleGenerate = () => {
@@ -72,7 +74,8 @@ const Index = () => {
            transferData.type && 
            transferData.account && 
            transferData.amount &&
-           transferData.transactionStatus;
+           transferData.transactionStatus &&
+           transferData.transactionId;
 
     // If Processing is selected, also check startingPercentage
     if (transferData.transactionStatus === 'Processing') {
@@ -124,6 +127,20 @@ const Index = () => {
               value={transferData.name}
               onChange={(e) => setTransferData({...transferData, name: e.target.value})}
               placeholder="Enter your full name"
+              className="h-12"
+            />
+          </div>
+
+          {/* Transaction ID */}
+          <div className="space-y-2">
+            <Label htmlFor="transactionId" className="text-sm font-medium text-gray-700">
+              Transaction ID <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="transactionId"
+              value={transferData.transactionId}
+              onChange={(e) => setTransferData({...transferData, transactionId: e.target.value})}
+              placeholder="TXN240805AB123456"
               className="h-12"
             />
           </div>
