@@ -262,118 +262,126 @@ const TransferLoading = () => {
 
   return (
     <>
-      <div className={`min-h-screen ${style.bg} p-4`}>
-        <div className="max-w-6xl mx-auto pt-8">
+      <div className={`min-h-screen ${style.bg} p-2 sm:p-4`}>
+        <div className="max-w-7xl mx-auto pt-4 sm:pt-8">
           {/* Header */}
-          <div className={`bg-gradient-to-r ${style.primary} text-white p-6 rounded-t-xl shadow-lg`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
+          <div className={`bg-gradient-to-r ${style.primary} text-white p-4 sm:p-6 lg:p-8 rounded-t-xl shadow-lg`}>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
                   <img 
                     src={style.logo} 
                     alt={`${transferData.bank} Logo`}
-                    className="w-12 h-12 object-contain"
+                    className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 object-contain"
                     onError={(e) => {
                       // Fallback to generic bank icon if image fails to load
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
                       target.parentElement!.innerHTML = '🏦';
-                      target.parentElement!.className += ' text-4xl';
+                      target.parentElement!.className += ' text-2xl sm:text-3xl lg:text-5xl';
                     }}
                   />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold">Fund Transferring</h1>
-                  <p className="text-white/90">Secure Transaction in Progress</p>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold">Fund Transferring</h1>
+                  <p className="text-white/90 text-sm sm:text-base lg:text-lg">Secure Transaction in Progress</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm text-white/80">Transaction ID</div>
-                <div className="font-mono text-lg">#TXN-{Date.now().toString().slice(-8)}</div>
+              <div className="text-center sm:text-right">
+                <div className="text-xs sm:text-sm text-white/80">Transaction ID</div>
+                <div className="font-mono text-sm sm:text-base lg:text-lg">#TXN-{Date.now().toString().slice(-8)}</div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 -mt-2">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 -mt-2">
             {/* Loading Section */}
-            <Card className={`${style.accent} border-2 bg-white/80 backdrop-blur-sm shadow-xl`}>
-              <CardContent className="p-8 text-center">
-                <div className="mb-8">
+            <Card className={`${style.accent} border-2 bg-white/80 backdrop-blur-sm shadow-xl order-2 xl:order-1`}>
+              <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                <div className="mb-6 sm:mb-8">
                   {getStatusIcon(transferData.transactionStatus, style)}
                 </div>
                 
-                <div className="space-y-4">
-                  <h2 className={`text-xl font-semibold ${style.text}`}>
+                <div className="space-y-3 sm:space-y-4">
+                  <h2 className={`text-lg sm:text-xl lg:text-2xl font-semibold ${style.text}`}>
                     {getStatusText(transferData.transactionStatus)}
                   </h2>
                   
                   {transferData.transactionStatus === 'Processing' && (
-                    <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
                       <div 
-                        className={`bg-gradient-to-r ${style.primary} h-4 rounded-full transition-all duration-1000 ease-out`}
+                        className={`bg-gradient-to-r ${style.primary} h-3 sm:h-4 rounded-full transition-all duration-1000 ease-out`}
                         style={{ width: `${progress}%` }}
                       ></div>
                     </div>
                   )}
                   
-                  {getProgressSteps(transferData.transactionStatus, progress)}
+                  <div className="text-left">
+                    {getProgressSteps(transferData.transactionStatus, progress)}
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Transfer Details */}
-            <Card className={`${style.accent} border-2 bg-white/80 backdrop-blur-sm shadow-xl`}>
-              <CardContent className="p-8">
-                <h3 className={`text-xl font-semibold ${style.text} mb-6 flex items-center gap-2`}>
-                  📋 Transfer Details
+            <Card className={`${style.accent} border-2 bg-white/80 backdrop-blur-sm shadow-xl order-1 xl:order-2`}>
+              <CardContent className="p-4 sm:p-6 lg:p-8">
+                <h3 className={`text-lg sm:text-xl lg:text-2xl font-semibold ${style.text} mb-4 sm:mb-6 flex items-center gap-2`}>
+                  <span className="text-lg sm:text-xl">📋</span> Transfer Details
                 </h3>
                 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Bank</label>
-                      <div className="flex items-center gap-2 mt-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-600">Bank</label>
+                      <div className="flex items-center gap-2 sm:gap-3 mt-1">
                         <img 
                           src={style.logo} 
                           alt={`${transferData.bank} Logo`}
-                          className="w-6 h-6 object-contain"
+                          className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 object-contain flex-shrink-0"
                           onError={(e) => {
                             // Fallback to generic bank icon if image fails to load
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                           }}
                         />
-                        <p className={`font-semibold ${style.text} text-sm`}>{transferData.bank}</p>
+                        <p className={`font-semibold ${style.text} text-xs sm:text-sm lg:text-base leading-tight`}>
+                          {transferData.bank}
+                        </p>
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Transfer Type</label>
-                      <p className={`font-semibold ${style.text}`}>{transferData.type}</p>
+                      <label className="text-xs sm:text-sm font-medium text-gray-600">Transfer Type</label>
+                      <p className={`font-semibold ${style.text} text-sm sm:text-base lg:text-lg mt-1`}>
+                        {transferData.type}
+                      </p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Transferer Name</label>
-                    <p className={`font-semibold ${style.text} text-lg`}>{transferData.name}</p>
+                    <label className="text-xs sm:text-sm font-medium text-gray-600">Transferer Name</label>
+                    <p className={`font-semibold ${style.text} text-base sm:text-lg lg:text-xl mt-1`}>
+                      {transferData.name}
+                    </p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Date & Time</label>
-                    <p className={`font-semibold ${style.text} font-mono`}>
+                    <label className="text-xs sm:text-sm font-medium text-gray-600">Date & Time</label>
+                    <p className={`font-semibold ${style.text} font-mono text-sm sm:text-base lg:text-lg mt-1 break-all sm:break-normal`}>
                       {formatDateTime(transferData.date, transferData.time)}
                     </p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Account Number</label>
-                    <p className={`font-mono font-semibold ${style.text} text-lg`}>
+                    <label className="text-xs sm:text-sm font-medium text-gray-600">Account Number</label>
+                    <p className={`font-mono font-semibold ${style.text} text-base sm:text-lg lg:text-xl mt-1 break-all sm:break-normal`}>
                       {transferData.account.replace(/(\d{4})(?=\d)/g, '$1-')}
                     </p>
                   </div>
 
-                  <div className={`bg-gradient-to-r ${style.primary} p-4 rounded-lg text-white`}>
-                    <label className="text-sm font-medium text-white/80">Transfer Amount</label>
-                    <p className="font-bold text-3xl">
+                  <div className={`bg-gradient-to-r ${style.primary} p-3 sm:p-4 lg:p-6 rounded-lg text-white`}>
+                    <label className="text-xs sm:text-sm font-medium text-white/80">Transfer Amount</label>
+                    <p className="font-bold text-xl sm:text-2xl lg:text-3xl xl:text-4xl mt-1 break-words">
                       {transferData.currency} {parseFloat(transferData.amount).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
@@ -381,10 +389,10 @@ const TransferLoading = () => {
                     </p>
                   </div>
 
-                  <div className={`border-2 ${style.accent} p-4 rounded-lg ${style.bg}`}>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium text-gray-700">Transaction Status:</span>
-                      <span className={`font-bold ${style.text} uppercase tracking-wide`}>
+                  <div className={`border-2 ${style.accent} p-3 sm:p-4 rounded-lg ${style.bg}`}>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 sm:gap-0">
+                      <span className="font-medium text-gray-700 text-sm sm:text-base">Transaction Status:</span>
+                      <span className={`font-bold ${style.text} uppercase tracking-wide text-sm sm:text-base lg:text-lg`}>
                         {transferData.transactionStatus}
                       </span>
                     </div>
@@ -395,8 +403,8 @@ const TransferLoading = () => {
           </div>
 
           {/* Security Notice */}
-          <div className="mt-6 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200">
-            <p className="text-sm text-gray-600 text-center">
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200">
+            <p className="text-xs sm:text-sm text-gray-600 text-center leading-relaxed">
               🔒 This transaction is secured with bank-grade encryption. Press ESC to go back to fill-up page.
             </p>
           </div>
@@ -405,16 +413,16 @@ const TransferLoading = () => {
 
       {/* Exit Confirmation Dialog */}
       <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 sm:mx-auto max-w-md sm:max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Navigation</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-lg sm:text-xl">Confirm Navigation</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm sm:text-base">
               Are you sure you want to leave this page and return to the fill-up form? Your current transfer data will be lost.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleExitConfirm}>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+            <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleExitConfirm} className="w-full sm:w-auto">
               Yes, Go Back
             </AlertDialogAction>
           </AlertDialogFooter>
