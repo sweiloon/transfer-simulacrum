@@ -21,6 +21,8 @@ interface TransferData {
   account: string;
   amount: string;
   currency: string;
+  transactionStatus: string;
+  startingPercentage: string;
 }
 
 const banks = [
@@ -52,7 +54,9 @@ const Index = () => {
     type: '',
     account: '',
     amount: '',
-    currency: 'RM'
+    currency: 'RM',
+    transactionStatus: '',
+    startingPercentage: ''
   });
 
   const handleGenerate = () => {
@@ -62,12 +66,22 @@ const Index = () => {
   };
 
   const isFormValid = () => {
-    return transferData.bank && 
+    const baseValid = transferData.bank && 
            transferData.name && 
            transferData.time && 
            transferData.type && 
            transferData.account && 
-           transferData.amount;
+           transferData.amount &&
+           transferData.transactionStatus;
+
+    // If Processing is selected, also check startingPercentage
+    if (transferData.transactionStatus === 'Processing') {
+      return baseValid && transferData.startingPercentage && 
+             parseInt(transferData.startingPercentage) >= 1 && 
+             parseInt(transferData.startingPercentage) <= 100;
+    }
+
+    return baseValid;
   };
 
   return (
@@ -155,6 +169,7 @@ const Index = () => {
                 value={transferData.time}
                 onChange={(e) => setTransferData({...transferData, time: e.target.value})}
                 className="h-12"
+                step="1"
               />
             </div>
           </div>
@@ -177,6 +192,42 @@ const Index = () => {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Transaction Status */}
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+              Transaction Status <span className="text-red-500">*</span>
+            </Label>
+            <Select value={transferData.transactionStatus} onValueChange={(value) => setTransferData({...transferData, transactionStatus: value, startingPercentage: value === 'Processing' ? transferData.startingPercentage : ''})}>
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="Select transaction status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cancelled" className="py-3">Cancelled</SelectItem>
+                <SelectItem value="Processing" className="py-3">Processing</SelectItem>
+                <SelectItem value="Successful" className="py-3">Successful</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Starting Percentage - Only show for Processing */}
+          {transferData.transactionStatus === 'Processing' && (
+            <div className="space-y-2">
+              <Label htmlFor="percentage" className="text-sm font-medium text-gray-700">
+                Starting Percentage <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="percentage"
+                type="number"
+                min="1"
+                max="100"
+                value={transferData.startingPercentage}
+                onChange={(e) => setTransferData({...transferData, startingPercentage: e.target.value})}
+                placeholder="Enter percentage (1-100)"
+                className="h-12"
+              />
+            </div>
+          )}
 
           {/* Bank Account */}
           <div className="space-y-2">
