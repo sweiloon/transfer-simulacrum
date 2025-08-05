@@ -29,74 +29,74 @@ interface TransferData {
 
 const bankStyles = {
   'Malayan Banking Berhad (Maybank)': {
-    primary: 'from-yellow-500 to-yellow-600',
+    primary: 'from-yellow-400 to-yellow-500',
     bg: 'bg-yellow-50',
     text: 'text-yellow-800',
-    accent: 'border-yellow-200',
-    logo: '🏦'
+    accent: 'border-yellow-300',
+    logo: '/lovable-uploads/323134fd-5e09-4850-a809-6dca1be6efb3.png'
   },
   'CIMB Bank Berhad': {
     primary: 'from-red-600 to-red-700',
     bg: 'bg-red-50',
     text: 'text-red-800',
-    accent: 'border-red-200',
-    logo: '🏛️'
+    accent: 'border-red-300',
+    logo: '/lovable-uploads/0818f65c-7b2b-46fe-8732-791fec36b4d7.png'
   },
   'Public Bank Berhad': {
-    primary: 'from-green-600 to-green-700',
-    bg: 'bg-green-50',
-    text: 'text-green-800',
-    accent: 'border-green-200',
-    logo: '🏢'
+    primary: 'from-red-500 to-red-600',
+    bg: 'bg-red-50',
+    text: 'text-red-800',
+    accent: 'border-red-300',
+    logo: '/lovable-uploads/ecbb9495-68b7-48b9-a9fa-d8ecdde97534.png'
   },
   'RHB Bank Berhad': {
-    primary: 'from-blue-700 to-blue-800',
+    primary: 'from-blue-600 to-blue-700',
     bg: 'bg-blue-50',
     text: 'text-blue-800',
-    accent: 'border-blue-200',
-    logo: '🏪'
+    accent: 'border-blue-300',
+    logo: '/lovable-uploads/5df8f1ad-9209-4506-b668-41afc7d9eb84.png'
   },
   'Hong Leong Bank Berhad': {
-    primary: 'from-purple-600 to-purple-700',
-    bg: 'bg-purple-50',
-    text: 'text-purple-800',
-    accent: 'border-purple-200',
-    logo: '🏬'
+    primary: 'from-blue-800 to-blue-900',
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    accent: 'border-blue-300',
+    logo: '/lovable-uploads/0054d41f-519d-43ab-b31a-d772b0a6f9f4.png'
   },
   'AmBank (M) Berhad': {
-    primary: 'from-orange-600 to-orange-700',
+    primary: 'from-red-500 to-yellow-400',
     bg: 'bg-orange-50',
-    text: 'text-orange-800',
-    accent: 'border-orange-200',
-    logo: '🏭'
+    text: 'text-red-700',
+    accent: 'border-orange-300',
+    logo: '/lovable-uploads/3f32e493-ecda-4a9a-8bec-a69fc75806af.png'
   },
   'Bank Islam Malaysia Berhad': {
-    primary: 'from-emerald-600 to-emerald-700',
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-800',
-    accent: 'border-emerald-200',
-    logo: '🕌'
-  },
-  'Bank Kerjasama Rakyat Malaysia Berhad (Bank Rakyat)': {
-    primary: 'from-teal-600 to-teal-700',
-    bg: 'bg-teal-50',
-    text: 'text-teal-800',
-    accent: 'border-teal-200',
-    logo: '🌾'
-  },
-  'United Overseas Bank (Malaysia) Bhd (UOB Malaysia)': {
-    primary: 'from-indigo-600 to-indigo-700',
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-800',
-    accent: 'border-indigo-200',
-    logo: '🌏'
-  },
-  'OCBC Bank (Malaysia) Berhad': {
     primary: 'from-pink-600 to-pink-700',
     bg: 'bg-pink-50',
     text: 'text-pink-800',
-    accent: 'border-pink-200',
-    logo: '🏯'
+    accent: 'border-pink-300',
+    logo: '/lovable-uploads/b8280e5a-f849-4a72-9355-e2fadbe41075.png'
+  },
+  'Bank Kerjasama Rakyat Malaysia Berhad (Bank Rakyat)': {
+    primary: 'from-blue-600 to-orange-500',
+    bg: 'bg-blue-50',
+    text: 'text-blue-800',
+    accent: 'border-blue-300',
+    logo: '/lovable-uploads/46561530-bef1-4f4f-8014-9f58b414430b.png'
+  },
+  'United Overseas Bank (Malaysia) Bhd (UOB Malaysia)': {
+    primary: 'from-blue-800 to-blue-900',
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    accent: 'border-blue-300',
+    logo: '/lovable-uploads/94bd47e5-b594-4d2f-962d-ed4f3896a330.png'
+  },
+  'OCBC Bank (Malaysia) Berhad': {
+    primary: 'from-red-500 to-red-600',
+    bg: 'bg-red-50',
+    text: 'text-red-800',
+    accent: 'border-red-300',
+    logo: '/lovable-uploads/5621d47e-a40e-4bb3-9479-6c3c84d66151.png'
   }
 };
 
@@ -268,7 +268,20 @@ const TransferLoading = () => {
           <div className={`bg-gradient-to-r ${style.primary} text-white p-6 rounded-t-xl shadow-lg`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <span className="text-4xl">{style.logo}</span>
+                <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                  <img 
+                    src={style.logo} 
+                    alt={`${transferData.bank} Logo`}
+                    className="w-12 h-12 object-contain"
+                    onError={(e) => {
+                      // Fallback to generic bank icon if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.parentElement!.innerHTML = '🏦';
+                      target.parentElement!.className += ' text-4xl';
+                    }}
+                  />
+                </div>
                 <div>
                   <h1 className="text-3xl font-bold">Fund Transferring</h1>
                   <p className="text-white/90">Secure Transaction in Progress</p>
@@ -319,7 +332,19 @@ const TransferLoading = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium text-gray-600">Bank</label>
-                      <p className={`font-semibold ${style.text} text-sm`}>{transferData.bank}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <img 
+                          src={style.logo} 
+                          alt={`${transferData.bank} Logo`}
+                          className="w-6 h-6 object-contain"
+                          onError={(e) => {
+                            // Fallback to generic bank icon if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                        <p className={`font-semibold ${style.text} text-sm`}>{transferData.bank}</p>
+                      </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Transfer Type</label>
