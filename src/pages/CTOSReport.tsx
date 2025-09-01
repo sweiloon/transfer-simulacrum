@@ -39,316 +39,304 @@ const CTOSReport = () => {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [navigate]);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 740) return { bg: 'bg-green-500', text: 'text-green-600' };
-    if (score >= 670) return { bg: 'bg-blue-500', text: 'text-blue-600' };
-    if (score >= 580) return { bg: 'bg-yellow-500', text: 'text-yellow-600' };
-    if (score >= 500) return { bg: 'bg-orange-500', text: 'text-orange-600' };
-    return { bg: 'bg-red-500', text: 'text-red-600' };
-  };
-
   const getScorePosition = (score: number) => {
     // Map score to degrees (0-180 degrees for semicircle)
     const percentage = (score - 300) / (850 - 300);
     return percentage * 180;
   };
 
-  const getScoreLabel = (score: number) => {
-    if (score >= 740) return 'Excellent';
-    if (score >= 670) return 'Very Good';
-    if (score >= 580) return 'Good';
-    if (score >= 500) return 'Fair';
-    return 'Poor';
-  };
-
   if (!ctosData) return null;
 
   const score = parseInt(ctosData.score);
-  const scoreColor = getScoreColor(score);
   const scorePosition = getScorePosition(score);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg">
+    <div className="min-h-screen bg-white p-4 font-sans">
+      <div className="max-w-5xl mx-auto bg-white shadow-none border border-black">
         {/* Header */}
-        <div className="bg-teal-600 text-white p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4">
-              <div className="text-3xl font-bold">ctos</div>
-              <div>
-                <div className="text-sm">Knowledge Creates Confidence</div>
-              </div>
+        <div className="flex justify-between items-start p-4 bg-white border-b border-black">
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-start">
+              <div className="text-4xl font-bold text-teal-600 mb-1" style={{ fontFamily: 'Arial, sans-serif' }}>ctos</div>
+              <div className="text-xs text-black font-normal">Knowledge Creates Confidence</div>
             </div>
-            <div className="text-right">
-              <div className="text-sm">Strictly Confidential</div>
-              <div className="text-sm">Report No.: CI-2831-20241004139936</div>
-              <div className="text-sm">Attention: selfcheck@app (SELFCHECK_APP)</div>
-              <div className="text-sm">Account: CDS (CTOS DATA SYSTEMS SDN BHD SELFCHECK CDS)</div>
-              <div className="text-sm">Date: 2024-10-04 15:39:36</div>
-            </div>
-            <div className="text-right">
-              <div className="text-xl font-bold">Page 3 of 8</div>
-              <div className="text-2xl font-bold mt-2">MyCTOS SCORE REPORT</div>
-              <div className="text-sm mt-1">@ the request of SING WEI LOON (950206015427)</div>
-            </div>
+          </div>
+          
+          <div className="text-left text-xs text-black leading-tight">
+            <div className="font-bold">Strictly Confidential</div>
+            <div>Report No.: CI-2831-20241004139936</div>
+            <div>Attention: selfcheck@app (SELFCHECK_APP)</div>
+            <div>Account: CDS (CTOS DATA SYSTEMS SDN BHD SELFCHECK CDS)</div>
+            <div>Date: 2024-10-04 15:39:36</div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-sm font-bold mb-4">Page 3 of 8</div>
+            <div className="text-2xl font-bold mb-1">MyCTOS SCORE REPORT</div>
+            <div className="text-xs">@ the request of SING WEI LOON (950206015427)</div>
           </div>
         </div>
 
         <div className="flex">
           {/* Left side - Report details */}
-          <div className="flex-1">
-            {/* ID Verification Section */}
-            <div className="bg-teal-600 text-white p-2">
-              <div className="flex items-center gap-2">
-                <div className="font-bold">A: SNAPSHOT</div>
-                <div className="italic">GAMBARAN RINGKAS</div>
-              </div>
+          <div className="flex-1 border-r border-black">
+            {/* Section A Header */}
+            <div className="bg-teal-700 text-white p-2 text-sm font-bold">
+              <span>A: SNAPSHOT </span>
+              <span className="italic font-normal">GAMBARAN RINGKAS</span>
             </div>
 
-            <div className="bg-teal-500 text-white p-2">
-              <div className="flex items-center gap-2">
-                <div className="font-bold">ID Verification</div>
-                <div className="italic">Pengesahan ID</div>
-              </div>
+            {/* ID Verification Header */}
+            <div className="bg-teal-600 text-white p-2 text-sm font-bold">
+              <span>ID Verification </span>
+              <span className="italic font-normal">Pengesahan ID</span>
             </div>
 
-            <table className="w-full border-collapse border border-gray-300 text-sm">
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold w-1/3">
-                  Name (Your input)<br/>
-                  <span className="italic">Nama (Input anda)</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.name}</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  New ID / Old ID (Your input)<br/>
-                  <span className="italic">ID Baru / ID Lama (Input anda)</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.newId}</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  Name <span className="italic">Nama</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.name}</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  New ID <span className="italic">ID Baru</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.oldId}</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  Old ID <span className="italic">ID Lama</span>
-                </td>
-                <td className="border border-gray-300 p-2"></td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  Date of Birth <span className="italic">Tarikh Lahir</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.dateOfBirth}</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  Address 1 <span className="italic">Alamat 1</span>
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {ctosData.address1}<br/>
-                  Source: SSM
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2 bg-gray-100 font-semibold">
-                  Address 2 <span className="italic">Alamat 2</span>
-                </td>
-                <td className="border border-gray-300 p-2">{ctosData.address2 || '-'}</td>
-              </tr>
+            {/* ID Verification Table */}
+            <table className="w-full text-xs border-collapse">
+              <tbody>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-200 font-bold w-2/5 align-top">
+                    Name (Your input)<br/>
+                    <span className="italic font-normal">Nama (Input anda)</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 align-top">{ctosData.name}</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white font-bold align-top">
+                    New ID / Old ID (Your input)<br/>
+                    <span className="italic font-normal">ID Baru / ID Lama (Input anda)</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">{ctosData.newId}</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-200 font-bold align-top">
+                    Name <span className="italic font-normal">Nama</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-200 align-top">{ctosData.name}</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white font-bold align-top">
+                    New ID <span className="italic font-normal">ID Baru</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">{ctosData.oldId}</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-200 font-bold align-top">
+                    Old ID <span className="italic font-normal">ID Lama</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-200 align-top"></td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white font-bold align-top">
+                    Date of Birth <span className="italic font-normal">Tarikh Lahir</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">{ctosData.dateOfBirth}</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-200 font-bold align-top">
+                    Address 1 <span className="italic font-normal">Alamat 1</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-200 align-top">
+                    {ctosData.address1}<br/>
+                    Source: SSM
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white font-bold align-top">
+                    Address 2 <span className="italic font-normal">Alamat 2</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">{ctosData.address2 || '-'}</td>
+                </tr>
+              </tbody>
             </table>
 
-            {/* Credit Info Section */}
-            <div className="bg-teal-600 text-white p-2 mt-4">
-              <div className="flex items-center gap-2">
-                <div className="font-bold">Credit Info at a Glance</div>
-                <div className="italic">Ringkasan Maklumat Kredit</div>
-              </div>
+            {/* Credit Info Header */}
+            <div className="bg-teal-600 text-white p-2 text-sm font-bold mt-4">
+              <span>Credit Info at a Glance </span>
+              <span className="italic font-normal">Ringkasan Maklumat Kredit</span>
             </div>
 
-            <table className="w-full border-collapse border border-gray-300 text-sm">
-              <tr className="bg-gray-100">
-                <td className="border border-gray-300 p-2 font-semibold">
-                  Credit Info <span className="italic">Maklumat Kredit</span>
-                </td>
-                <td className="border border-gray-300 p-2 font-semibold">
-                  Source <span className="italic">Sumber</span>
-                </td>
-                <td className="border border-gray-300 p-2 font-semibold">
-                  Value <span className="italic">Nilai</span>
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Bankruptcy Proceedings Record<br/>
-                  <span className="italic">Rekod Prosiding Muflis</span>
-                </td>
-                <td className="border border-gray-300 p-2">Newspaper/Gazette</td>
-                <td className="border border-gray-300 p-2">YES</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Legal records in past 24 months (personal capacity)<br/>
-                  <span className="italic">Rekod undang-undang dalam tempoh 24 bulan yang lalu (kapasiti peribadi)</span><br/>
-                  - Number <span className="italic">Bilangan</span><br/>
-                  - Value <span className="italic">Nilai</span>
-                </td>
-                <td className="border border-gray-300 p-2">CTOS</td>
-                <td className="border border-gray-300 p-2">0<br/><br/>0</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Legal records in past 24 months (non-personal capacity)<br/>
-                  <span className="italic">Rekod undang-undang dalam tempoh 24 bulan yang lalu (kapasiti bukan peribadi)</span><br/>
-                  - Number <span className="italic">Bilangan</span><br/>
-                  - Value <span className="italic">Nilai</span>
-                </td>
-                <td className="border border-gray-300 p-2">CTOS</td>
-                <td className="border border-gray-300 p-2">0<br/><br/>0</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Availability of Legal Records<br/>
-                  <span className="italic">Rekod Undang-undang</span>
-                </td>
-                <td className="border border-gray-300 p-2">BNM</td>
-                <td className="border border-gray-300 p-2">NO</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Special Attention Accounts<br/>
-                  <span className="italic">Akaun di bawah Perhatian Khas</span>
-                </td>
-                <td className="border border-gray-300 p-2">BNM</td>
-                <td className="border border-gray-300 p-2">YES</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Outstanding credit facilities<br/>
-                  <span className="italic">Kemudahan Kredit Belum Jelas</span><br/>
-                  - Number <span className="italic">Bilangan</span><br/>
-                  - Value <span className="italic">Nilai</span><br/>
-                  - Installments in arrears in past 12 months<br/>
-                  <span className="italic">Ansuran tertunggak dalam tempoh 12 bulan yang lalu</span>
-                </td>
-                <td className="border border-gray-300 p-2">BNM</td>
-                <td className="border border-gray-300 p-2">1<br/>0.00<br/>NO</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Credit applications in past 12 months<br/>
-                  <span className="italic">Permohonan Kredit dalam tempoh 12 bulan yang lalu</span><br/>
-                  - Total <span className="italic">Jumlah</span><br/>
-                  - Approved <span className="italic">Diluluskan</span><br/>
-                  - Pending <span className="italic">Dalam pertimbangan</span>
-                </td>
-                <td className="border border-gray-300 p-2">BNM</td>
-                <td className="border border-gray-300 p-2">0<br/>0<br/>0</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 p-2">
-                  Availability of Trade Referee Listing<br/>
-                  <span className="italic">Rekod Rujukan Perdagangan</span>
-                </td>
-                <td className="border border-gray-300 p-2">CTOS</td>
-                <td className="border border-gray-300 p-2">NO</td>
-              </tr>
+            {/* Credit Info Table */}
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-400 p-2 text-left font-bold">
+                    Credit Info <span className="italic font-normal">Maklumat Kredit</span>
+                  </th>
+                  <th className="border border-gray-400 p-2 text-left font-bold">
+                    Source <span className="italic font-normal">Sumber</span>
+                  </th>
+                  <th className="border border-gray-400 p-2 text-left font-bold">
+                    Value <span className="italic font-normal">Nilai</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white">
+                    Bankruptcy Proceedings Record<br/>
+                    <span className="italic">Rekod Prosiding Muflis</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white">Newspaper/Gazette</td>
+                  <td className="border border-gray-400 p-2 bg-white">YES</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-100">
+                    Legal records in past 24 months (personal<br/>
+                    capacity)<br/>
+                    <span className="italic">Rekod undang-undang dalam tempoh 24 bulan yang</span><br/>
+                    <span className="italic">lalu (kapasiti peribadi)</span><br/>
+                    - Number <span className="italic">Bilangan</span><br/>
+                    - Value <span className="italic">Nilai</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-100 align-top">CTOS</td>
+                  <td className="border border-gray-400 p-2 bg-gray-100 align-top">0<br/><br/><br/><br/>0</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white">
+                    Legal records in past 24 months (non-personal<br/>
+                    capacity)<br/>
+                    <span className="italic">Rekod undang-undang dalam tempoh 24 bulan yang</span><br/>
+                    <span className="italic">lalu (kapasiti bukan peribadi)</span><br/>
+                    - Number <span className="italic">Bilangan</span><br/>
+                    - Value <span className="italic">Nilai</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">CTOS</td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">0<br/><br/><br/><br/>0</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-100">
+                    Availability of Legal Records<br/>
+                    <span className="italic">Rekod Undang-undang</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-100">BNM</td>
+                  <td className="border border-gray-400 p-2 bg-gray-100">NO</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white">
+                    Special Attention Accounts<br/>
+                    <span className="italic">Akaun di bawah Perhatian Khas</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white">BNM</td>
+                  <td className="border border-gray-400 p-2 bg-white">YES</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-100">
+                    Outstanding credit facilities<br/>
+                    <span className="italic">Kemudahan Kredit Belum Jelas</span><br/>
+                    - Number <span className="italic">Bilangan</span><br/>
+                    - Value <span className="italic">Nilai</span><br/>
+                    - Installments in arrears in past 12 months<br/>
+                    <span className="italic">Ansuran tertunggak dalam tempoh 12 bulan yang lalu</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-100 align-top">BNM</td>
+                  <td className="border border-gray-400 p-2 bg-gray-100 align-top">1<br/>0.00<br/>NO</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-white">
+                    Credit applications in past 12 months<br/>
+                    <span className="italic">Permohonan Kredit dalam tempoh 12 bulan yang lalu</span><br/>
+                    - Total <span className="italic">Jumlah</span><br/>
+                    - Approved <span className="italic">Diluluskan</span><br/>
+                    - Pending <span className="italic">Dalam pertimbangan</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">BNM</td>
+                  <td className="border border-gray-400 p-2 bg-white align-top">0<br/>0<br/>0</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 p-2 bg-gray-100">
+                    Availability of Trade Referee Listing<br/>
+                    <span className="italic">Rekod Rujukan Perdagangan</span>
+                  </td>
+                  <td className="border border-gray-400 p-2 bg-gray-100">CTOS</td>
+                  <td className="border border-gray-400 p-2 bg-gray-100">NO</td>
+                </tr>
+              </tbody>
             </table>
 
             {/* eTR Plus Section */}
-            <div className="bg-teal-600 text-white p-2 mt-4">
-              <div className="font-bold">eTR Plus at a Glance</div>
+            <div className="bg-teal-600 text-white p-2 text-sm font-bold mt-4">
+              eTR Plus at a Glance
             </div>
           </div>
 
           {/* Right side - Score gauge */}
-          <div className="w-80 p-6 bg-white border-l border-gray-300">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="text-2xl font-bold text-teal-600">ctos</div>
-                <div className="text-xl font-semibold text-teal-600">Score</div>
-              </div>
-
-              {/* Score Gauge */}
-              <div className="relative w-64 h-32 mx-auto mb-6">
-                <svg viewBox="0 0 200 100" className="w-full h-full">
-                  {/* Background arc sections */}
-                  <path d="M 20 80 A 80 80 0 0 1 60 20" fill="none" stroke="#dc2626" strokeWidth="20" />
-                  <path d="M 60 20 A 80 80 0 0 1 100 10" fill="none" stroke="#ea580c" strokeWidth="20" />
-                  <path d="M 100 10 A 80 80 0 0 1 140 20" fill="none" stroke="#eab308" strokeWidth="20" />
-                  <path d="M 140 20 A 80 80 0 0 1 180 80" fill="none" stroke="#059669" strokeWidth="20" />
-                  
-                  {/* Score labels */}
-                  <text x="30" y="95" textAnchor="middle" className="text-xs fill-red-600 font-semibold">Poor</text>
-                  <text x="65" y="15" textAnchor="middle" className="text-xs fill-orange-600 font-semibold">Fair</text>
-                  <text x="100" y="8" textAnchor="middle" className="text-xs fill-yellow-600 font-semibold">Good</text>
-                  <text x="135" y="15" textAnchor="middle" className="text-xs fill-green-600 font-semibold">Very Good</text>
-                  <text x="170" y="95" textAnchor="middle" className="text-xs fill-green-700 font-semibold">Excellent</text>
-                  
-                  {/* Score range labels */}
-                  <text x="20" y="85" textAnchor="middle" className="text-xs fill-gray-600">300 - 499</text>
-                  <text x="60" y="25" textAnchor="middle" className="text-xs fill-gray-600">500 - 579</text>
-                  <text x="100" y="20" textAnchor="middle" className="text-xs fill-gray-600">580 - 669</text>
-                  <text x="140" y="25" textAnchor="middle" className="text-xs fill-gray-600">670 - 739</text>
-                  <text x="180" y="85" textAnchor="middle" className="text-xs fill-gray-600">740 - 850</text>
-                  
-                  {/* Pointer */}
-                  <g transform={`rotate(${scorePosition} 100 80)`}>
-                    <line x1="100" y1="80" x2="100" y2="30" stroke="#333" strokeWidth="3" />
-                    <circle cx="100" cy="80" r="4" fill="#333" />
-                  </g>
-                </svg>
-                
-                {/* Score number */}
-                <div className="absolute inset-0 flex items-end justify-center pb-2">
-                  <div className="text-center">
-                    <div className="text-sm text-gray-600">300</div>
-                    <div className="text-4xl font-bold">{score}</div>
-                    <div className="text-sm text-gray-600">850</div>
-                  </div>
+          <div className="w-80 bg-white border-l-0">
+            <div className="p-4">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="text-3xl font-bold text-teal-600" style={{ fontFamily: 'Arial, sans-serif' }}>ctos</div>
+                  <div className="text-xl font-semibold text-teal-600" style={{ fontFamily: 'Arial, sans-serif' }}>Score</div>
                 </div>
-              </div>
 
-              <div className="bg-yellow-100 p-4 rounded-lg">
-                <div className="font-semibold text-gray-800 mb-2">What is affecting my Score?</div>
-                <div className="text-sm text-gray-700 italic mb-3">Apakah yang menjejaskan Skor anda ?</div>
-                
-                <div className="text-left space-y-3 text-sm">
-                  <div>
-                    <div className="font-semibold">1. There is serious delinquency (over 90 days past due) or adverse record filed.</div>
-                    <div className="text-gray-600 text-xs mt-1">
-                      Terdapat delinkuensi serius (yang tertunggak melebihi 90 hari) atau rekod buruk telah difailkan.
-                    </div>
-                  </div>
+                {/* Score Gauge */}
+                <div className="relative w-64 h-36 mx-auto mb-4">
+                  <svg viewBox="0 0 240 120" className="w-full h-full">
+                    {/* Background gauge sections with exact colors from image */}
+                    <path d="M 30 100 A 90 90 0 0 1 80 25" fill="none" stroke="#dc2626" strokeWidth="18" strokeLinecap="round" />
+                    <path d="M 85 20 A 90 90 0 0 1 120 15" fill="none" stroke="#f97316" strokeWidth="18" strokeLinecap="round" />
+                    <path d="M 120 15 A 90 90 0 0 1 155 20" fill="none" stroke="#eab308" strokeWidth="18" strokeLinecap="round" />
+                    <path d="M 160 25 A 90 90 0 0 1 210 100" fill="none" stroke="#22c55e" strokeWidth="18" strokeLinecap="round" />
+                    
+                    {/* Score labels with exact positioning */}
+                    <text x="45" y="110" textAnchor="middle" className="text-xs font-bold fill-red-600">Poor</text>
+                    <text x="90" y="28" textAnchor="middle" className="text-xs font-bold fill-orange-600">Fair</text>
+                    <text x="120" y="18" textAnchor="middle" className="text-xs font-bold fill-yellow-600">Good</text>
+                    <text x="150" y="28" textAnchor="middle" className="text-xs font-bold fill-green-600">Very Good</text>
+                    <text x="195" y="110" textAnchor="middle" className="text-xs font-bold fill-green-600">Excellent</text>
+                    
+                    {/* Score range labels */}
+                    <text x="45" y="95" textAnchor="middle" className="text-xs fill-gray-600">300 - 499</text>
+                    <text x="90" y="40" textAnchor="middle" className="text-xs fill-gray-600">500 - 579</text>
+                    <text x="120" y="30" textAnchor="middle" className="text-xs fill-gray-600">580 - 669</text>
+                    <text x="150" y="40" textAnchor="middle" className="text-xs fill-gray-600">670 - 739</text>
+                    <text x="195" y="95" textAnchor="middle" className="text-xs fill-gray-600">740 - 850</text>
+                    
+                    {/* Pointer - exact style from image */}
+                    <g transform={`rotate(${scorePosition - 90} 120 100)`}>
+                      <polygon points="120,100 125,95 125,50 115,50 115,95" fill="#333" />
+                      <circle cx="120" cy="100" r="5" fill="#333" />
+                    </g>
+                  </svg>
                   
-                  <div>
-                    <div className="font-semibold">2. You have a higher number of outstanding loans than the average credit user.</div>
-                    <div className="text-gray-600 text-xs mt-1">
-                      Anda mempunyai bilangan pinjaman tertunggak yang lebih tinggi berbanding dengan purata pengguna kredit.
-                    </div>
-                  </div>
+                  {/* Score numbers positioned exactly like image */}
+                  <div className="absolute bottom-0 left-0 text-sm font-bold">300</div>
+                  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-4xl font-bold">{score}</div>
+                  <div className="absolute bottom-0 right-0 text-sm font-bold">850</div>
+                </div>
+
+                <div className="bg-yellow-100 border border-yellow-300 p-3 rounded text-left">
+                  <div className="font-bold text-sm mb-1">What is affecting my Score?</div>
+                  <div className="text-xs italic text-gray-700 mb-3">Apakah yang menjejaskan Skor anda ?</div>
                   
-                  <div>
-                    <div className="font-semibold">3. There is delinquency (past due with no minimum payment) in your credit report.</div>
-                    <div className="text-gray-600 text-xs mt-1">
-                      Terdapat delinkuensi (tunggakan tanpa bayaran minimum) dalam laporan kredit anda.
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <div className="font-semibold">1. There is serious delinquency (over 90 days past due) or adverse record filed.</div>
+                      <div className="text-gray-600 italic">
+                        Terdapat delinkuensi serius (yang tertunggak melebihi 90 hari) atau rekod buruk telah difailkan.
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div>
-                    <div className="font-semibold">4. There is not enough recent account information on your credit report.</div>
-                    <div className="text-gray-600 text-xs mt-1">
-                      Maklumat akaun terkini tidak mencukupi dalam laporan kredit anda.
+                    
+                    <div>
+                      <div className="font-semibold">2. You have a higher number of outstanding loans than the average credit user.</div>
+                      <div className="text-gray-600 italic">
+                        Anda mempunyai bilangan pinjaman tertunggak yang lebih tinggi berbanding dengan purata pengguna kredit.
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="font-semibold">3. There is delinquency (past due with no minimum payment) in your credit report.</div>
+                      <div className="text-gray-600 italic">
+                        Terdapat delinkuensi (tunggakan tanpa bayaran minimum) dalam laporan kredit anda.
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="font-semibold">4. There is not enough recent account information on your credit report.</div>
+                      <div className="text-gray-600 italic">
+                        Maklumat akaun terkini tidak mencukupi dalam laporan kredit anda.
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -358,10 +346,10 @@ const CTOSReport = () => {
         </div>
 
         {/* Footer disclaimer */}
-        <div className="p-4 bg-gray-50 text-xs text-gray-600 border-t">
+        <div className="p-3 bg-white text-xs text-gray-700 border-t border-black leading-tight">
           <div className="italic">
             DISCLAIMER: This MyCTOS Report may not be reproduced in whole, in part or in any other manner. The report is provided in strict confidence for your personal use only. This report contains information 
-            extracted from the public sources as well as from credit institutions which our credit bureau has been verified unless otherwise stated in this report. In the event of ambiguities, conflicts or possible variations in interpretation 
+            extracted from public sources as well as from credit institutions which our credit bureau has been verified unless otherwise stated in this report. In the event of ambiguities, conflicts or possible variations in interpretation 
             between the English and Malay version of this credit report, the English version shall always prevail.
           </div>
         </div>
