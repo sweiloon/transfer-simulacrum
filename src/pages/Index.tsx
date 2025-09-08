@@ -11,7 +11,6 @@ import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight,
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
-import maybankBanner from '@/assets/maybank-banner.png';
 
 interface TransferData {
   bank: string;
@@ -134,11 +133,9 @@ const Index = () => {
         {/* Header */}
         <div className="relative bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
           <div 
-            className="absolute inset-0 opacity-20"
+            className="absolute inset-0 opacity-20 bg-gradient-to-br from-green-700 via-green-600 to-green-500"
             style={{
-              backgroundImage: `url(${maybankBanner})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 100%)',
             }}
           />
           <div className="relative z-10">
