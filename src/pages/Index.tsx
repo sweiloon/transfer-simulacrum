@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -124,151 +125,6 @@ const Index = () => {
              parseInt(ctosData.score) <= 850;
     }
   };
-
-  // Show Maybank interface if Maybank is selected
-  if (activeForm === 'transfer' && transferData.bank === 'Malayan Banking Berhad (Maybank)') {
-    return (
-      <div className="min-h-screen bg-gray-100">
-        {/* Header with green gradient */}
-        <div className="bg-gradient-to-r from-green-700 to-green-600 text-white">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <h1 className="text-xl font-bold">Maybank2u</h1>
-                <span className="text-sm bg-green-800 px-2 py-1 rounded">MAE</span>
-              </div>
-              <nav className="hidden md:flex space-x-6 text-sm">
-                <span>MY ACCOUNTS</span>
-                <span>INSURANCE</span>
-                <span className="text-yellow-300 font-semibold">PAY & TRANSFER</span>
-                <span>APPLY</span>
-                <span>CONTACT US</span>
-              </nav>
-              <div className="text-right">
-                <div className="text-xs flex items-center">
-                  <span className="mr-2">🔒</span>
-                  Your last login was on Saturday, 29 March 2025 at 12:36:44
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation tabs */}
-        <div className="bg-white border-b">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="flex space-x-8">
-              <button className="py-4 text-gray-500 border-b-2 border-transparent">PAY</button>
-              <button className="py-4 text-black font-semibold border-b-2 border-black">TRANSFER</button>
-              <button className="py-4 text-gray-500 border-b-2 border-transparent">RELOAD</button>
-              <button className="py-4 text-gray-500 border-b-2 border-transparent">REQUEST</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="bg-white rounded-lg shadow-sm">
-            {/* Transfer From Section */}
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-sm text-gray-600">Transfer From</h3>
-                  <p className="text-lg font-semibold text-black">Savings Account-i</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Available Balance</p>
-                  <p className="text-lg font-semibold text-green-600">RM 11.47</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Transfer To Section */}
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm text-gray-600">Transfer To</h3>
-                    <button className="text-gray-400">✏️</button>
-                  </div>
-                  <p className="text-lg font-semibold text-black mb-1">{transferData.name || 'LOO HUI KIEN'}</p>
-                  <p className="text-sm text-gray-600">{transferData.account || '6331069024'}</p>
-                  <p className="text-lg font-semibold text-black">{transferData.currency} {transferData.amount || '1.80'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Transfer Details */}
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Recipient's bank</p>
-                    <p className="font-semibold">PUBLIC BANK</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Transaction Type</p>
-                    <p className="font-semibold">Funds Transfer</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Transfer Mode</p>
-                    <p className="font-semibold">DuitNow Transfer</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Effective date</p>
-                    <p className="font-semibold">Today 04 Sep 2025</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Recipient Reference</p>
-                    <p className="font-semibold">cola</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Total Amount */}
-            <div className="p-6 border-t border-gray-200">
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-semibold">Total Amount</p>
-                <p className="text-xl font-bold text-red-600">{transferData.currency} {transferData.amount || '1.80'}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom notification section */}
-          <div className="mt-6 bg-yellow-400 rounded-lg p-6 flex items-center justify-between">
-            <div className="flex-1">
-              <p className="text-black font-medium">
-                Tap on the notification on your smartphone<br />
-                to approve the transaction.
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="bg-white text-black px-6 py-2 rounded font-medium">
-                Secure Verification
-              </button>
-              <button className="bg-green-600 text-white px-8 py-2 rounded font-medium">
-                REQUEST
-              </button>
-            </div>
-          </div>
-
-          {/* Edit Form Toggle */}
-          <div className="mt-6 text-center">
-            <Button
-              variant="outline"
-              onClick={() => setTransferData({...transferData, bank: ''})}
-              className="bg-blue-600 text-white hover:bg-blue-700"
-            >
-              Edit Transfer Details
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -559,7 +415,7 @@ const Index = () => {
                     id="dateOfBirth"
                     value={ctosData.dateOfBirth}
                     onChange={(e) => setCTOSData({...ctosData, dateOfBirth: e.target.value})}
-                    placeholder="06/02/1995"
+                    placeholder="06-02-1995"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -572,7 +428,7 @@ const Index = () => {
                     id="address1"
                     value={ctosData.address1}
                     onChange={(e) => setCTOSData({...ctosData, address1: e.target.value})}
-                    placeholder="NO. 123, JALAN ABC 1/2"
+                    placeholder="NO. 49, JALAN IMPIAN EMAS 68, TAMAN IMPIAN EMAS, MALAYSIA, 81300 SKUDAI, JOHOR"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -585,14 +441,14 @@ const Index = () => {
                     id="address2"
                     value={ctosData.address2}
                     onChange={(e) => setCTOSData({...ctosData, address2: e.target.value})}
-                    placeholder="TAMAN DEF, 12345 SHAH ALAM, SELANGOR"
+                    placeholder="Optional address"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="score" className="text-sm font-medium text-gray-900">
-                    CTOS Score (300-850) <span className="text-red-500">*</span>
+                    Credit Score (300-850) <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="score"
@@ -601,7 +457,7 @@ const Index = () => {
                     max="850"
                     value={ctosData.score}
                     onChange={(e) => setCTOSData({...ctosData, score: e.target.value})}
-                    placeholder="Enter score between 300-850"
+                    placeholder="457"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -612,21 +468,30 @@ const Index = () => {
             <Button 
               onClick={handleGenerate}
               disabled={!isFormValid()}
-              className="w-full h-12 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 text-white font-medium"
+              className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-base transition-all duration-200 disabled:opacity-50 disabled:hover:bg-gray-900"
             >
-              {activeForm === 'transfer' ? 'Generate' : 'Generate CTOS Report'}
+              {activeForm === 'transfer' ? (
+                <>
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Generate Transfer
+                </>
+              ) : (
+                <>
+                  <FileText className="mr-2 h-5 w-5" />
+                  Generate Report
+                </>
+              )}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Right side - Background Image (hidden on small screens) */}
-      <div className="hidden lg:block lg:flex-1 relative">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/lovable-uploads/ce07f52c-022f-4733-857d-037c33f65b4e.png')`
-          }}
+      {/* Right side - Background Image (Hidden on mobile) */}
+      <div className="hidden lg:block lg:flex-1 bg-gradient-to-br from-orange-200 via-purple-200 to-blue-300 relative overflow-hidden">
+        <img 
+          src="/lovable-uploads/c89bdd41-48aa-430e-ac63-da848e1e15cc.png"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
     </div>
