@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight, Edit2 } from 'lucide-react';
+import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -130,146 +129,141 @@ const Index = () => {
   if (activeForm === 'transfer' && transferData.bank === 'Malayan Banking Berhad (Maybank)') {
     return (
       <div className="min-h-screen bg-gray-100">
-        {/* Header */}
-        <div className="relative bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
-          <div 
-            className="absolute inset-0 opacity-20 bg-gradient-to-br from-green-700 via-green-600 to-green-500"
-            style={{
-              backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 100%)',
-            }}
-          />
-          <div className="relative z-10">
-            {/* Top Navigation */}
-            <div className="px-6 py-4 flex items-center justify-between">
+        {/* Header with green gradient */}
+        <div className="bg-gradient-to-r from-green-700 to-green-600 text-white">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="text-xl font-bold">Maybank2u</div>
-                <div className="text-sm bg-white/20 px-2 py-1 rounded">MAE</div>
+                <h1 className="text-xl font-bold">Maybank2u</h1>
+                <span className="text-sm bg-green-800 px-2 py-1 rounded">MAE</span>
               </div>
-              <div className="hidden md:flex items-center space-x-6 text-sm">
-                <a href="#" className="hover:text-green-200">MY ACCOUNTS</a>
-                <a href="#" className="hover:text-green-200">INSURANCE</a>
-                <a href="#" className="hover:text-green-200">PAY & TRANSFER</a>
-                <a href="#" className="hover:text-green-200">APPLY</a>
-                <a href="#" className="hover:text-green-200">CONTACT US</a>
-              </div>
-              <div className="w-8 h-8 flex items-center justify-center">
-                <div className="w-6 h-6 border border-white rounded"></div>
-              </div>
-            </div>
-            
-            {/* Login Info */}
-            <div className="px-6 pb-4">
-              <div className="flex items-center text-sm">
-                <div className="w-4 h-4 bg-white/30 rounded mr-2"></div>
-                <span>Your last login was on Saturday, 29 March 2025 at 12:36:44</span>
+              <nav className="hidden md:flex space-x-6 text-sm">
+                <span>MY ACCOUNTS</span>
+                <span>INSURANCE</span>
+                <span className="text-yellow-300 font-semibold">PAY & TRANSFER</span>
+                <span>APPLY</span>
+                <span>CONTACT US</span>
+              </nav>
+              <div className="text-right">
+                <div className="text-xs flex items-center">
+                  <span className="mr-2">🔒</span>
+                  Your last login was on Saturday, 29 March 2025 at 12:36:44
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Navigation tabs */}
         <div className="bg-white border-b">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-6">
             <div className="flex space-x-8">
-              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">PAY</button>
-              <button className="py-4 text-gray-900 border-b-2 border-gray-900 font-medium">TRANSFER</button>
-              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">RELOAD</button>
-              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">REQUEST</button>
+              <button className="py-4 text-gray-500 border-b-2 border-transparent">PAY</button>
+              <button className="py-4 text-black font-semibold border-b-2 border-black">TRANSFER</button>
+              <button className="py-4 text-gray-500 border-b-2 border-transparent">RELOAD</button>
+              <button className="py-4 text-gray-500 border-b-2 border-transparent">REQUEST</button>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="space-y-6">
+        {/* Main content */}
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="bg-white rounded-lg shadow-sm">
             {/* Transfer From Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="flex items-center justify-between">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-gray-900 font-medium">Transfer From</h3>
-                  <p className="text-gray-700 mt-1">Savings Account-i</p>
+                  <h3 className="text-sm text-gray-600">Transfer From</h3>
+                  <p className="text-lg font-semibold text-black">Savings Account-i</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-gray-500 text-sm">Available Balance</p>
-                  <p className="text-green-600 font-bold text-lg">RM 11.47</p>
+                  <p className="text-sm text-gray-600">Available Balance</p>
+                  <p className="text-lg font-semibold text-green-600">RM 11.47</p>
                 </div>
               </div>
             </div>
 
             {/* Transfer To Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="flex items-center justify-between">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="text-gray-900 font-medium mb-2">Transfer To</h3>
-                  <p className="text-gray-900 font-semibold">LOO HUI KIEN</p>
-                  <p className="text-gray-600 text-sm">6331069024</p>
-                  <p className="text-gray-900 font-semibold">RM 1.80</p>
-                </div>
-                <Edit2 className="w-5 h-5 text-gray-400" />
-              </div>
-            </div>
-
-            {/* Separator */}
-            <div className="border-t-2 border-yellow-400 my-6"></div>
-
-            {/* Transfer Details Form */}
-            <div className="bg-white rounded-lg p-6 shadow-sm space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Recipient's bank</span>
-                  <span className="text-gray-900 font-medium">PUBLIC BANK</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Transaction Type</span>
-                  <span className="text-gray-900 font-medium">Funds Transfer</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Transfer Mode</span>
-                  <span className="text-gray-900 font-medium">DuitNow Transfer</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Effective date</span>
-                  <span className="text-gray-900 font-medium">Today 04 Sep 2025</span>
-                </div>
-                <div className="flex justify-between md:col-span-2">
-                  <span className="text-gray-700">Recipient Reference</span>
-                  <span className="text-gray-900 font-medium">cola</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm text-gray-600">Transfer To</h3>
+                    <button className="text-gray-400">✏️</button>
+                  </div>
+                  <p className="text-lg font-semibold text-black mb-1">{transferData.name || 'LOO HUI KIEN'}</p>
+                  <p className="text-sm text-gray-600">{transferData.account || '6331069024'}</p>
+                  <p className="text-lg font-semibold text-black">{transferData.currency} {transferData.amount || '1.80'}</p>
                 </div>
               </div>
             </div>
 
-            {/* Total Amount Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
+            {/* Transfer Details */}
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600">Recipient's bank</p>
+                    <p className="font-semibold">PUBLIC BANK</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Transaction Type</p>
+                    <p className="font-semibold">Funds Transfer</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Transfer Mode</p>
+                    <p className="font-semibold">DuitNow Transfer</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600">Effective date</p>
+                    <p className="font-semibold">Today 04 Sep 2025</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Recipient Reference</p>
+                    <p className="font-semibold">cola</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Amount */}
+            <div className="p-6 border-t border-gray-200">
               <div className="flex justify-between items-center">
-                <span className="text-gray-900 font-semibold text-lg">Total Amount</span>
-                <span className="text-red-600 font-bold text-xl">RM 1.80</span>
+                <p className="text-lg font-semibold">Total Amount</p>
+                <p className="text-xl font-bold text-red-600">{transferData.currency} {transferData.amount || '1.80'}</p>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Section */}
-        <div className="bg-yellow-400 mt-8">
-          <div className="max-w-6xl mx-auto px-6 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-black font-medium">
-                  Tap on the notification on your smartphone<br />
-                  to approve the transaction.
-                </p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button className="bg-white text-gray-900 px-6 py-3 rounded font-medium hover:bg-gray-50">
-                  Secure Verification
-                </button>
-                <button 
-                  onClick={handleGenerate}
-                  className="bg-green-600 text-white px-8 py-3 rounded font-medium hover:bg-green-700"
-                >
-                  REQUEST
-                </button>
-              </div>
+          {/* Bottom notification section */}
+          <div className="mt-6 bg-yellow-400 rounded-lg p-6 flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-black font-medium">
+                Tap on the notification on your smartphone<br />
+                to approve the transaction.
+              </p>
             </div>
+            <div className="flex items-center space-x-4">
+              <button className="bg-white text-black px-6 py-2 rounded font-medium">
+                Secure Verification
+              </button>
+              <button className="bg-green-600 text-white px-8 py-2 rounded font-medium">
+                REQUEST
+              </button>
+            </div>
+          </div>
+
+          {/* Edit Form Toggle */}
+          <div className="mt-6 text-center">
+            <Button
+              variant="outline"
+              onClick={() => setTransferData({...transferData, bank: ''})}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Edit Transfer Details
+            </Button>
           </div>
         </div>
       </div>
@@ -565,7 +559,7 @@ const Index = () => {
                     id="dateOfBirth"
                     value={ctosData.dateOfBirth}
                     onChange={(e) => setCTOSData({...ctosData, dateOfBirth: e.target.value})}
-                    placeholder="06-02-1995"
+                    placeholder="06/02/1995"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -578,7 +572,7 @@ const Index = () => {
                     id="address1"
                     value={ctosData.address1}
                     onChange={(e) => setCTOSData({...ctosData, address1: e.target.value})}
-                    placeholder="NO. 49, JALAN IMPIAN EMAS 68, TAMAN IMPIAN EMAS, MALAYSIA, 81300 SKUDAI, JOHOR"
+                    placeholder="NO. 123, JALAN ABC 1/2"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -591,14 +585,14 @@ const Index = () => {
                     id="address2"
                     value={ctosData.address2}
                     onChange={(e) => setCTOSData({...ctosData, address2: e.target.value})}
-                    placeholder="Optional address"
+                    placeholder="TAMAN DEF, 12345 SHAH ALAM, SELANGOR"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="score" className="text-sm font-medium text-gray-900">
-                    Credit Score (300-850) <span className="text-red-500">*</span>
+                    CTOS Score (300-850) <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="score"
@@ -607,7 +601,7 @@ const Index = () => {
                     max="850"
                     value={ctosData.score}
                     onChange={(e) => setCTOSData({...ctosData, score: e.target.value})}
-                    placeholder="457"
+                    placeholder="Enter score between 300-850"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
@@ -618,30 +612,21 @@ const Index = () => {
             <Button 
               onClick={handleGenerate}
               disabled={!isFormValid()}
-              className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-base transition-all duration-200 disabled:opacity-50 disabled:hover:bg-gray-900"
+              className="w-full h-12 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 text-white font-medium"
             >
-              {activeForm === 'transfer' ? (
-                <>
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Generate Transfer
-                </>
-              ) : (
-                <>
-                  <FileText className="mr-2 h-5 w-5" />
-                  Generate Report
-                </>
-              )}
+              {activeForm === 'transfer' ? 'Generate' : 'Generate CTOS Report'}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Right side - Background Image (Hidden on mobile) */}
-      <div className="hidden lg:block lg:flex-1 bg-gradient-to-br from-orange-200 via-purple-200 to-blue-300 relative overflow-hidden">
-        <img 
-          src="/lovable-uploads/c89bdd41-48aa-430e-ac63-da848e1e15cc.png"
-          alt="Background"
-          className="absolute inset-0 w-full h-full object-cover"
+      {/* Right side - Background Image (hidden on small screens) */}
+      <div className="hidden lg:block lg:flex-1 relative">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/lovable-uploads/ce07f52c-022f-4733-857d-037c33f65b4e.png')`
+          }}
         />
       </div>
     </div>
