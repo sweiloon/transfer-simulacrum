@@ -117,14 +117,12 @@ const Index = () => {
 
   const isFormValid = () => {
     if (activeForm === 'transfer') {
+      // Only check required fields: Transfer Bank, Transferer Name, Transfer Amount, Bank Account Number, Transaction Status
       const baseValid = transferData.bank && 
              transferData.name && 
-             transferData.time && 
-             transferData.type && 
              transferData.account && 
              transferData.amount &&
-             transferData.transactionStatus &&
-             transferData.transactionId;
+             transferData.transactionStatus;
 
       // If Processing is selected, also check startingPercentage
       if (transferData.transactionStatus === 'Processing') {
@@ -235,7 +233,7 @@ const Index = () => {
                 {/* Transaction ID */}
                 <div className="space-y-2">
                   <Label htmlFor="transactionId" className="text-sm font-medium text-gray-900">
-                    Transaction ID <span className="text-red-500">*</span>
+                    Transaction ID
                   </Label>
                   <Input
                     id="transactionId"
@@ -250,7 +248,7 @@ const Index = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-900">
-                      Transfer Date <span className="text-red-500">*</span>
+                      Transfer Date
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -279,7 +277,7 @@ const Index = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="time" className="text-sm font-medium text-gray-900">
-                      Transfer Time <span className="text-red-500">*</span>
+                      Transfer Time
                     </Label>
                     <Input
                       id="time"
@@ -295,7 +293,7 @@ const Index = () => {
                 {/* Transfer Type */}
                 <div className="space-y-2">
                   <Label htmlFor="type" className="text-sm font-medium text-gray-900">
-                    Transfer Type <span className="text-red-500">*</span>
+                    Transfer Type
                   </Label>
                   <Select value={transferData.type} onValueChange={(value) => setTransferData({...transferData, type: value})}>
                     <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
@@ -332,7 +330,7 @@ const Index = () => {
                 {transferData.transactionStatus === 'Processing' && (
                   <div className="space-y-2">
                     <Label htmlFor="percentage" className="text-sm font-medium text-gray-900">
-                      Starting Percentage <span className="text-red-500">*</span>
+                      Starting Percentage
                     </Label>
                     <Input
                       id="percentage"
@@ -403,7 +401,7 @@ const Index = () => {
                 {/* Pay From Account */}
                 <div className="space-y-2">
                   <Label htmlFor="payFromAccount" className="text-sm font-medium text-gray-900">
-                    Pay From Account <span className="text-red-500">*</span>
+                    Pay From Account
                   </Label>
                   <Select value={transferData.payFromAccount} onValueChange={(value) => setTransferData({...transferData, payFromAccount: value})}>
                     <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
@@ -422,7 +420,7 @@ const Index = () => {
                 {/* Transfer Mode */}
                 <div className="space-y-2">
                   <Label htmlFor="transferMode" className="text-sm font-medium text-gray-900">
-                    Transfer Mode <span className="text-red-500">*</span>
+                    Transfer Mode
                   </Label>
                   <Select value={transferData.transferMode} onValueChange={(value) => setTransferData({...transferData, transferMode: value})}>
                     <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
@@ -441,7 +439,7 @@ const Index = () => {
                 {/* Effective Date */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-900">
-                    Effective Date <span className="text-red-500">*</span>
+                    Effective Date
                   </Label>
                   <Popover>
                     <PopoverTrigger asChild>
