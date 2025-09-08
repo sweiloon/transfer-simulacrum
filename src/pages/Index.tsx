@@ -24,6 +24,10 @@ interface TransferData {
   transactionStatus: string;
   startingPercentage: string;
   transactionId: string;
+  recipientReference: string;
+  payFromAccount: string;
+  transferMode: string;
+  effectiveDate: Date;
 }
 
 interface CTOSData {
@@ -52,7 +56,20 @@ const banks = [
 const transferTypes = [
   'Duitnow Transfer',
   'Interbank GIRO',
-  '3rd Party Transfer'
+  '3rd Party Transfer',
+  'Funds Transfer'
+];
+
+const transferModes = [
+  'Duitnow Transfer',
+  'Interbank GIRO',
+  '3rd Party Transfer',
+  'Funds Transfer'
+];
+
+const payFromAccounts = [
+  'Savings Account-i',
+  'DuitNow'
 ];
 
 const Index = () => {
@@ -69,7 +86,11 @@ const Index = () => {
     currency: 'RM',
     transactionStatus: '',
     startingPercentage: '',
-    transactionId: ''
+    transactionId: '',
+    recipientReference: '',
+    payFromAccount: 'Savings Account-i',
+    transferMode: 'Funds Transfer',
+    effectiveDate: new Date()
   });
   
   const [ctosData, setCTOSData] = useState<CTOSData>({
@@ -363,6 +384,88 @@ const Index = () => {
                       className="flex-1 h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                     />
                   </div>
+                </div>
+
+                {/* Recipient Reference */}
+                <div className="space-y-2">
+                  <Label htmlFor="recipientReference" className="text-sm font-medium text-gray-900">
+                    Recipient Reference
+                  </Label>
+                  <Input
+                    id="recipientReference"
+                    value={transferData.recipientReference}
+                    onChange={(e) => setTransferData({...transferData, recipientReference: e.target.value})}
+                    placeholder="Optional reference note"
+                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                  />
+                </div>
+
+                {/* Pay From Account */}
+                <div className="space-y-2">
+                  <Label htmlFor="payFromAccount" className="text-sm font-medium text-gray-900">
+                    Pay From Account <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={transferData.payFromAccount} onValueChange={(value) => setTransferData({...transferData, payFromAccount: value})}>
+                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                      <SelectValue placeholder="Select account" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {payFromAccounts.map((account) => (
+                        <SelectItem key={account} value={account} className="py-3">
+                          {account}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Transfer Mode */}
+                <div className="space-y-2">
+                  <Label htmlFor="transferMode" className="text-sm font-medium text-gray-900">
+                    Transfer Mode <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={transferData.transferMode} onValueChange={(value) => setTransferData({...transferData, transferMode: value})}>
+                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                      <SelectValue placeholder="Select transfer mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {transferModes.map((mode) => (
+                        <SelectItem key={mode} value={mode} className="py-3">
+                          {mode}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Effective Date */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-900">
+                    Effective Date <span className="text-red-500">*</span>
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "h-12 justify-start text-left font-normal border-gray-300 bg-gray-50 text-gray-900 hover:bg-gray-100 focus:border-gray-900 focus:ring-gray-900",
+                          !transferData.effectiveDate && "text-gray-500"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {transferData.effectiveDate ? format(transferData.effectiveDate, "dd/MM/yyyy") : <span>Pick effective date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={transferData.effectiveDate}
+                        onSelect={(date) => date && setTransferData({...transferData, effectiveDate: date})}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </>
             ) : (
