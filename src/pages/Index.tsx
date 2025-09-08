@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight } from 'lucide-react';
+import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight, Edit2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import maybankBanner from '@/assets/maybank-banner.png';
 
 interface TransferData {
   bank: string;
@@ -125,6 +126,158 @@ const Index = () => {
              parseInt(ctosData.score) <= 850;
     }
   };
+
+  // Show Maybank interface if Maybank is selected
+  if (activeForm === 'transfer' && transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `url(${maybankBanner})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+          <div className="relative z-10">
+            {/* Top Navigation */}
+            <div className="px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="text-xl font-bold">Maybank2u</div>
+                <div className="text-sm bg-white/20 px-2 py-1 rounded">MAE</div>
+              </div>
+              <div className="hidden md:flex items-center space-x-6 text-sm">
+                <a href="#" className="hover:text-green-200">MY ACCOUNTS</a>
+                <a href="#" className="hover:text-green-200">INSURANCE</a>
+                <a href="#" className="hover:text-green-200">PAY & TRANSFER</a>
+                <a href="#" className="hover:text-green-200">APPLY</a>
+                <a href="#" className="hover:text-green-200">CONTACT US</a>
+              </div>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <div className="w-6 h-6 border border-white rounded"></div>
+              </div>
+            </div>
+            
+            {/* Login Info */}
+            <div className="px-6 pb-4">
+              <div className="flex items-center text-sm">
+                <div className="w-4 h-4 bg-white/30 rounded mr-2"></div>
+                <span>Your last login was on Saturday, 29 March 2025 at 12:36:44</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="bg-white border-b">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex space-x-8">
+              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">PAY</button>
+              <button className="py-4 text-gray-900 border-b-2 border-gray-900 font-medium">TRANSFER</button>
+              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">RELOAD</button>
+              <button className="py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">REQUEST</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="space-y-6">
+            {/* Transfer From Section */}
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-900 font-medium">Transfer From</h3>
+                  <p className="text-gray-700 mt-1">Savings Account-i</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-500 text-sm">Available Balance</p>
+                  <p className="text-green-600 font-bold text-lg">RM 11.47</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Transfer To Section */}
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3 className="text-gray-900 font-medium mb-2">Transfer To</h3>
+                  <p className="text-gray-900 font-semibold">LOO HUI KIEN</p>
+                  <p className="text-gray-600 text-sm">6331069024</p>
+                  <p className="text-gray-900 font-semibold">RM 1.80</p>
+                </div>
+                <Edit2 className="w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+
+            {/* Separator */}
+            <div className="border-t-2 border-yellow-400 my-6"></div>
+
+            {/* Transfer Details Form */}
+            <div className="bg-white rounded-lg p-6 shadow-sm space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Recipient's bank</span>
+                  <span className="text-gray-900 font-medium">PUBLIC BANK</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Transaction Type</span>
+                  <span className="text-gray-900 font-medium">Funds Transfer</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Transfer Mode</span>
+                  <span className="text-gray-900 font-medium">DuitNow Transfer</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Effective date</span>
+                  <span className="text-gray-900 font-medium">Today 04 Sep 2025</span>
+                </div>
+                <div className="flex justify-between md:col-span-2">
+                  <span className="text-gray-700">Recipient Reference</span>
+                  <span className="text-gray-900 font-medium">cola</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Amount Section */}
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-900 font-semibold text-lg">Total Amount</span>
+                <span className="text-red-600 font-bold text-xl">RM 1.80</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="bg-yellow-400 mt-8">
+          <div className="max-w-6xl mx-auto px-6 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-black font-medium">
+                  Tap on the notification on your smartphone<br />
+                  to approve the transaction.
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button className="bg-white text-gray-900 px-6 py-3 rounded font-medium hover:bg-gray-50">
+                  Secure Verification
+                </button>
+                <button 
+                  onClick={handleGenerate}
+                  className="bg-green-600 text-white px-8 py-3 rounded font-medium hover:bg-green-700"
+                >
+                  REQUEST
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex">
