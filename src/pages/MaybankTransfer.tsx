@@ -54,7 +54,7 @@ const MaybankTransfer = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 relative">
+    <div className="min-h-screen relative" style={{ backgroundColor: '#e7e7e7' }}>
       {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -82,7 +82,7 @@ const MaybankTransfer = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <div className="text-gray-700 text-sm font-bold">Transfer From Savings Account-i</div>
+              <div className="text-gray-700" style={{ fontSize: '16px' }}>Transfer From <span className="font-bold">Savings Account-i</span></div>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-gray-600 text-sm">Available Balance</span>
@@ -94,13 +94,13 @@ const MaybankTransfer = () => {
         {/* Transfer To Section */}
         <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-start justify-between mb-2">
               <div>
-                <div className="text-gray-700 text-sm font-medium mb-1">Transfer To {transferData.name}</div>
+                <div className="text-gray-700 text-sm mb-1">Transfer To <span className="font-bold">{transferData.name}</span></div>
                 <div className="text-gray-600 text-sm">{transferData.account}</div>
-                <div className="text-red-600 font-medium text-lg mt-1">{transferData.currency} {transferData.amount}</div>
+                <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 mt-0">
                 <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-4 h-4" />
               </Button>
             </div>
@@ -109,7 +109,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Transfer Details Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-2 -mt-1">
           <div className="p-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
