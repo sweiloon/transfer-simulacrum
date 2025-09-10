@@ -44,19 +44,26 @@ const MaybankTransfer = () => {
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-sm flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="text-gray-600">Processing your transfer...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 relative">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+            <p className="text-gray-600">Processing your transfer...</p>
+            <Button
+              variant="outline"
+              onClick={() => setIsLoading(false)}
+              className="mt-4"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Header with Maybank banner */}
       <div className="relative">
         <img 
@@ -66,25 +73,6 @@ const MaybankTransfer = () => {
         />
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex space-x-8">
-            <button className="px-4 py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">
-              PAY
-            </button>
-            <button className="px-4 py-4 text-gray-900 border-b-2 border-blue-600 font-medium">
-              TRANSFER
-            </button>
-            <button className="px-4 py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">
-              RELOAD
-            </button>
-            <button className="px-4 py-4 text-gray-500 border-b-2 border-transparent hover:text-gray-700">
-              REQUEST
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 relative">
@@ -169,15 +157,15 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Total Amount Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16">
           <div className="px-6 py-4 flex items-center justify-between">
             <div className="text-gray-900 font-medium text-lg">Total Amount</div>
             <div className="text-red-600 font-bold text-xl">{transferData.currency} {transferData.amount}</div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center space-x-4">
+        {/* Action Buttons - moved much lower */}
+        <div className="flex justify-center space-x-4 mt-16">
           <Button
             variant="outline"
             onClick={() => navigate('/')}
