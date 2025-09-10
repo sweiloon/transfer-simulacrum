@@ -111,15 +111,10 @@ const Index = () => {
     score: ''
   });
 
-  // Redirect to auth if not logged in, or to dashboard if logged in
+  // Redirect to auth if not logged in
   useEffect(() => {
     if (!user) {
-      navigate('/auth', { replace: true });
-    } else {
-      // If user is logged in and on root path, redirect to dashboard
-      if (window.location.pathname === '/') {
-        navigate('/dashboard', { replace: true });
-      }
+      navigate('/auth');
     }
   }, [user, navigate]);
 
@@ -199,7 +194,7 @@ const Index = () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      navigate('/auth', { replace: true });
+      navigate('/auth');
     } finally {
       setIsLoggingOut(false);
     }

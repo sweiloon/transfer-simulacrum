@@ -31,7 +31,7 @@ const Auth = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      navigate('/');
     }
   }, [user, navigate]);
 
@@ -58,7 +58,7 @@ const Auth = () => {
             title: "Welcome back!",
             description: "You have been successfully logged in.",
           });
-          navigate('/dashboard', { replace: true });
+          navigate('/');
         } else {
           toast({
             title: "Login failed",
@@ -107,7 +107,7 @@ const Auth = () => {
               title: "Account created!",
               description: "Your account has been created successfully.",
             });
-            navigate('/dashboard', { replace: true });
+            navigate('/');
           }
         } else {
           toast({
