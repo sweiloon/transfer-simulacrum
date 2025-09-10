@@ -100,7 +100,7 @@ const MaybankTransfer = () => {
                 <div className="text-gray-600 text-sm">{transferData.account}</div>
                 <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12 -mt-1">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12 -mt-3">
                 <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-7 h-7" />
               </Button>
             </div>
@@ -111,19 +111,19 @@ const MaybankTransfer = () => {
           <div className="p-6 bg-white rounded-b-lg">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-sm font-medium">Recipient's bank</span>
+                <span style={{ color: '#474747' }} className="text-sm font-normal">Recipient's bank</span>
                 <span className="text-gray-500 text-sm">PUBLIC BANK</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-sm font-medium">Transaction Type</span>
+                <span style={{ color: '#474747' }} className="text-sm font-normal">Transaction Type</span>
                 <span className="text-gray-500 text-sm">Funds Transfer</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-sm font-medium">Transfer Mode</span>
+                <span style={{ color: '#474747' }} className="text-sm font-normal">Transfer Mode</span>
                 <span className="text-gray-500 text-sm">DuitNow Transfer</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-sm font-medium">Effective date</span>
+                <span style={{ color: '#474747' }} className="text-sm font-normal">Effective date</span>
                 <span className="text-gray-500 text-sm">
                   Today {new Date(transferData.effectiveDate).toLocaleDateString('en-GB', {
                     day: '2-digit',
@@ -133,7 +133,7 @@ const MaybankTransfer = () => {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-800 text-sm font-medium">Recipient Reference</span>
+                <span style={{ color: '#474747' }} className="text-sm font-normal">Recipient Reference</span>
                 <span className="text-gray-500 text-sm">
                   {transferData.recipientReference || 'cola'}
                 </span>
@@ -143,7 +143,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Total Amount Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16 mt-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16 mt-2">
           <div className="px-6 py-4 flex items-center justify-between">
             <div className="text-gray-800 text-sm font-medium">Total Amount</div>
             <div className="text-red-600 text-sm">{transferData.currency} {transferData.amount}</div>
