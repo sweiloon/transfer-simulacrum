@@ -86,7 +86,7 @@ const MaybankTransfer = () => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-gray-600 text-sm">Available Balance</span>
-              <span className="text-teal-600 font-medium">RM 23,047.58</span>
+              <span className="text-teal-600 text-sm">RM 23,047.58</span>
             </div>
           </div>
         </div>
@@ -96,11 +96,11 @@ const MaybankTransfer = () => {
           <div className="p-6">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <div className="text-gray-700 text-sm mb-1">Transfer To <span className="font-bold">{transferData.name}</span></div>
-                <div className="text-gray-600 text-sm">{transferData.account}</div>
-                <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
+                <div className="text-gray-700 mb-1" style={{ fontSize: '15px' }}>Transfer To <span className="font-bold">{transferData.name}</span></div>
+                <div className="text-gray-600" style={{ fontSize: '13px' }}>{transferData.account}</div>
+                <div className="text-sm mt-1" style={{ color: '#474747' }}>{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12 -mt-3">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12" style={{ marginTop: '-17px' }}>
                 <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-7 h-7" />
               </Button>
             </div>
@@ -145,7 +145,7 @@ const MaybankTransfer = () => {
         {/* Total Amount Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16 mt-2">
           <div className="px-6 py-4 flex items-center justify-between">
-            <div className="text-gray-800 text-sm font-medium">Total Amount</div>
+            <div className="text-sm font-normal" style={{ color: '#474747' }}>Total Amount</div>
             <div className="text-red-600 text-sm">{transferData.currency} {transferData.amount}</div>
           </div>
         </div>
