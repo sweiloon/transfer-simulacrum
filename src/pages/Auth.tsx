@@ -76,11 +76,23 @@ const Auth = () => {
 
         const result = await register(formData.email, formData.password, formData.name);
         if (result.success) {
-          toast({
-            title: "Account created!",
-            description: "Your account has been created successfully.",
-          });
-          navigate('/');
+          if (result.error) {
+            // Email confirmation required
+            toast({
+              title: "Account created!",
+              description: result.error,
+              variant: "default",
+            });
+            // Switch to sign in tab after successful registration
+            setIsSignIn(true);
+          } else {
+            // Direct login (no email confirmation required)
+            toast({
+              title: "Account created!",
+              description: "Your account has been created successfully.",
+            });
+            navigate('/');
+          }
         } else {
           toast({
             title: "Registration failed",

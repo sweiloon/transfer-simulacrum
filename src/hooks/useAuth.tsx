@@ -80,6 +80,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: false, error: error.message };
       }
 
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        return { 
+          success: true, 
+          error: 'Please check your email and click the confirmation link to activate your account.' 
+        };
+      }
+
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Registration failed' };
@@ -94,6 +102,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (error) {
+        // Provide more specific error messages
+        if (error.message.includes('email_not_confirmed')) {
+          return { 
+            success: false, 
+            error: 'Please check your email and click the confirmation link to activate your account before signing in.' 
+          };
+        }
+        if (error.message.includes('Invalid login credentials')) {
+          return { 
+            success: false, 
+            error: 'Invalid email or password. Please check your credentials and try again.' 
+          };
+        }
         return { success: false, error: error.message };
       }
 
