@@ -126,9 +126,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      const result = await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Logout timeout')), 5000)
+        )
+      ]) as any;
+      
+      if (result?.error) {
+        console.error('Logout error:', result.error);
+        // Force clear local state even if Supabase call fails
+        setUser(null);
+        setSession(null);
+      }
     } catch (error) {
       console.error('Error during logout:', error);
+      // Force clear local state on any error including timeout
+      setUser(null);
+      setSession(null);
     }
   };
 

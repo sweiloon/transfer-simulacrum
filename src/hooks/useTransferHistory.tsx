@@ -26,6 +26,7 @@ export interface TransferHistoryItem {
 
 export const useTransferHistory = () => {
   const [transfers, setTransfers] = useState<TransferHistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
   // Load transfers from Supabase when component mounts or user changes
@@ -40,20 +41,26 @@ export const useTransferHistory = () => {
   const loadTransfers = async () => {
     if (!user) return;
     
+    setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('transfer_history')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      const result = await Promise.race([
+        supabase
+          .from('transfer_history')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Load timeout')), 10000)
+        )
+      ]) as any;
 
-      if (error) {
-        console.error('Error loading transfer history:', error);
+      if (result?.error) {
+        console.error('Error loading transfer history:', result.error);
         return;
       }
 
-      if (data) {
-        const formattedTransfers = data.map((transfer: any) => ({
+      if (result?.data) {
+        const formattedTransfers = result.data.map((transfer: any) => ({
           ...transfer,
           date: new Date(transfer.date),
           effective_date: new Date(transfer.effective_date),
@@ -63,6 +70,8 @@ export const useTransferHistory = () => {
       }
     } catch (error) {
       console.error('Error loading transfer history:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -145,11 +154,12 @@ export const useTransferHistory = () => {
     return transfers.find(transfer => transfer.id === transferId);
   };
 
-  return {
-    transfers,
-    addTransfer,
-    deleteTransfer,
+  return { 
+    transfers, 
+    addTransfer, 
+    deleteTransfer, 
     getTransferById,
-    refreshTransfers: loadTransfers
+    refreshTransfers: loadTransfers,
+    isLoading
   };
 };

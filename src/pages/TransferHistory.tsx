@@ -9,20 +9,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 
 const TransferHistory = () => {
-  const { transfers, deleteTransfer } = useTransferHistory();
+  const { transfers, deleteTransfer, isLoading: transfersLoading } = useTransferHistory();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Redirect if not logged in and handle loading
+  // Redirect if not logged in
   useEffect(() => {
     if (!user) {
       navigate('/auth');
-    } else {
-      // Simulate loading for transfer history
-      const timer = setTimeout(() => setIsLoading(false), 800);
-      return () => clearTimeout(timer);
     }
   }, [user, navigate]);
 
@@ -73,7 +68,7 @@ const TransferHistory = () => {
   };
 
   // Show loading spinner
-  if (isLoading) {
+  if (transfersLoading) {
     return (
       <div className="min-h-screen bg-background p-4 md:p-6 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
