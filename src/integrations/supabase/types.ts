@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transfer_history: {
+        Row: {
+          account: string
+          amount: string
+          bank: string
+          created_at: string
+          currency: string
+          date: string
+          effective_date: string | null
+          id: string
+          name: string
+          pay_from_account: string | null
+          recipient_bank: string | null
+          recipient_reference: string | null
+          starting_percentage: string | null
+          time: string | null
+          transaction_id: string | null
+          transaction_status: string
+          transfer_mode: string | null
+          type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account: string
+          amount: string
+          bank: string
+          created_at?: string
+          currency: string
+          date: string
+          effective_date?: string | null
+          id?: string
+          name: string
+          pay_from_account?: string | null
+          recipient_bank?: string | null
+          recipient_reference?: string | null
+          starting_percentage?: string | null
+          time?: string | null
+          transaction_id?: string | null
+          transaction_status: string
+          transfer_mode?: string | null
+          type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account?: string
+          amount?: string
+          bank?: string
+          created_at?: string
+          currency?: string
+          date?: string
+          effective_date?: string | null
+          id?: string
+          name?: string
+          pay_from_account?: string | null
+          recipient_bank?: string | null
+          recipient_reference?: string | null
+          starting_percentage?: string | null
+          time?: string | null
+          transaction_id?: string | null
+          transaction_status?: string
+          transfer_mode?: string | null
+          type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

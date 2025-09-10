@@ -34,8 +34,19 @@ const TransferHistory = () => {
   };
 
   const handleViewTransfer = (transfer: any) => {
-    // Store the transfer data to be loaded in the main form
-    localStorage.setItem('editTransferData', JSON.stringify(transfer));
+    // Store the transfer data to be loaded in the main form with proper field mapping
+    const mappedTransfer = {
+      ...transfer,
+      transactionStatus: transfer.transaction_status,
+      startingPercentage: transfer.starting_percentage,
+      transactionId: transfer.transaction_id,
+      recipientReference: transfer.recipient_reference,
+      payFromAccount: transfer.pay_from_account,
+      transferMode: transfer.transfer_mode,
+      effectiveDate: transfer.effective_date,
+      recipientBank: transfer.recipient_bank
+    };
+    localStorage.setItem('editTransferData', JSON.stringify(mappedTransfer));
     navigate('/');
   };
 
@@ -99,7 +110,7 @@ const TransferHistory = () => {
                         <CardTitle className="text-lg">{transfer.bank}</CardTitle>
                         <CardDescription className="flex items-center gap-2">
                           <Calendar className="h-3 w-3" />
-                          {format(transfer.createdAt, 'PPP')}
+                          {format(transfer.created_at, 'PPP')}
                           {transfer.time && (
                             <>
                               <Clock className="h-3 w-3 ml-2" />
@@ -112,9 +123,9 @@ const TransferHistory = () => {
                     <div className="flex items-center gap-2">
                       <Badge 
                         variant="outline" 
-                        className={getStatusColor(transfer.transactionStatus)}
+                        className={getStatusColor(transfer.transaction_status)}
                       >
-                        {transfer.transactionStatus}
+                        {transfer.transaction_status}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -165,39 +176,39 @@ const TransferHistory = () => {
                         <p className="text-foreground">{transfer.type}</p>
                       </div>
                     )}
-                    {transfer.recipientBank && (
+                    {transfer.recipient_bank && (
                       <div>
                         <span className="font-medium text-muted-foreground">Recipient Bank:</span>
-                        <p className="text-foreground">{transfer.recipientBank}</p>
+                        <p className="text-foreground">{transfer.recipient_bank}</p>
                       </div>
                     )}
-                    {transfer.transactionId && (
+                    {transfer.transaction_id && (
                       <div>
                         <span className="font-medium text-muted-foreground">Transaction ID:</span>
-                        <p className="text-foreground font-mono">{transfer.transactionId}</p>
+                        <p className="text-foreground font-mono">{transfer.transaction_id}</p>
                       </div>
                     )}
                   </div>
                   
-                  {transfer.recipientReference && (
+                  {transfer.recipient_reference && (
                     <div className="pt-2 border-t">
                       <span className="font-medium text-muted-foreground">Reference:</span>
-                      <p className="text-foreground">{transfer.recipientReference}</p>
+                      <p className="text-foreground">{transfer.recipient_reference}</p>
                     </div>
                   )}
                   
-                  {transfer.transactionStatus === 'Processing' && transfer.startingPercentage && (
+                  {transfer.transaction_status === 'Processing' && transfer.starting_percentage && (
                     <div className="pt-2 border-t">
                       <span className="font-medium text-muted-foreground">Progress:</span>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 bg-secondary rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${transfer.startingPercentage}%` }}
+                            style={{ width: `${transfer.starting_percentage}%` }}
                           />
                         </div>
                         <span className="text-sm text-muted-foreground">
-                          {transfer.startingPercentage}%
+                          {transfer.starting_percentage}%
                         </span>
                       </div>
                     </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface TransferHistoryItem {
   id: string;
-  userId: string;
+  user_id: string;
   bank: string;
   name: string;
   date: Date;
@@ -12,22 +13,22 @@ export interface TransferHistoryItem {
   account: string;
   amount: string;
   currency: string;
-  transactionStatus: string;
-  startingPercentage: string;
-  transactionId: string;
-  recipientReference: string;
-  payFromAccount: string;
-  transferMode: string;
-  effectiveDate: Date;
-  recipientBank: string;
-  createdAt: Date;
+  transaction_status: string;
+  starting_percentage: string;
+  transaction_id: string;
+  recipient_reference: string;
+  pay_from_account: string;
+  transfer_mode: string;
+  effective_date: Date;
+  recipient_bank: string;
+  created_at: Date;
 }
 
 export const useTransferHistory = () => {
   const [transfers, setTransfers] = useState<TransferHistoryItem[]>([]);
   const { user } = useAuth();
 
-  // Load transfers from localStorage when component mounts or user changes
+  // Load transfers from Supabase when component mounts or user changes
   useEffect(() => {
     if (user) {
       loadTransfers();
@@ -36,77 +37,103 @@ export const useTransferHistory = () => {
     }
   }, [user]);
 
-  const loadTransfers = () => {
+  const loadTransfers = async () => {
     if (!user) return;
     
     try {
-      const savedTransfers = localStorage.getItem('transferHistory');
-      if (savedTransfers) {
-        const allTransfers = JSON.parse(savedTransfers);
-        // Filter transfers for current user
-        const userTransfers = allTransfers
-          .filter((transfer: TransferHistoryItem) => transfer.userId === user.id)
-          .map((transfer: any) => ({
-            ...transfer,
-            date: new Date(transfer.date),
-            effectiveDate: new Date(transfer.effectiveDate),
-            createdAt: new Date(transfer.createdAt)
-          }))
-          .sort((a: TransferHistoryItem, b: TransferHistoryItem) => 
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        setTransfers(userTransfers);
+      const { data, error } = await supabase
+        .from('transfer_history')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading transfer history:', error);
+        return;
+      }
+
+      if (data) {
+        const formattedTransfers = data.map((transfer: any) => ({
+          ...transfer,
+          date: new Date(transfer.date),
+          effective_date: new Date(transfer.effective_date),
+          created_at: new Date(transfer.created_at)
+        }));
+        setTransfers(formattedTransfers);
       }
     } catch (error) {
       console.error('Error loading transfer history:', error);
     }
   };
 
-  const addTransfer = (transferData: any) => {
-    if (!user) return;
+  const addTransfer = async (transferData: any) => {
+    if (!user) return null;
 
     try {
-      const newTransfer: TransferHistoryItem = {
-        ...transferData,
-        id: Date.now().toString(),
-        userId: user.id,
-        createdAt: new Date()
+      const newTransfer = {
+        user_id: user.id,
+        bank: transferData.bank,
+        name: transferData.name,
+        date: transferData.date,
+        time: transferData.time,
+        type: transferData.type,
+        account: transferData.account,
+        amount: transferData.amount,
+        currency: transferData.currency,
+        transaction_status: transferData.transactionStatus,
+        starting_percentage: transferData.startingPercentage,
+        transaction_id: transferData.transactionId,
+        recipient_reference: transferData.recipientReference,
+        pay_from_account: transferData.payFromAccount,
+        transfer_mode: transferData.transferMode,
+        effective_date: transferData.effectiveDate,
+        recipient_bank: transferData.recipientBank
       };
 
-      // Get existing transfers from localStorage
-      const existingTransfers = JSON.parse(localStorage.getItem('transferHistory') || '[]');
-      
-      // Add new transfer
-      const updatedTransfers = [newTransfer, ...existingTransfers];
-      
-      // Save to localStorage
-      localStorage.setItem('transferHistory', JSON.stringify(updatedTransfers));
-      
-      // Update local state
-      setTransfers(prev => [newTransfer, ...prev]);
-      
-      return newTransfer.id;
+      const { data, error } = await supabase
+        .from('transfer_history')
+        .insert([newTransfer])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving transfer:', error);
+        return null;
+      }
+
+      if (data) {
+        const formattedTransfer = {
+          ...data,
+          date: new Date(data.date),
+          effective_date: new Date(data.effective_date),
+          created_at: new Date(data.created_at)
+        };
+        setTransfers(prev => [formattedTransfer, ...prev]);
+        return data.id;
+      }
+
+      return null;
     } catch (error) {
       console.error('Error saving transfer:', error);
       return null;
     }
   };
 
-  const deleteTransfer = (transferId: string) => {
+  const deleteTransfer = async (transferId: string) => {
     if (!user) return;
 
     try {
-      // Get all transfers from localStorage
-      const allTransfers = JSON.parse(localStorage.getItem('transferHistory') || '[]');
-      
-      // Remove the transfer
-      const updatedTransfers = allTransfers.filter((transfer: TransferHistoryItem) => 
-        transfer.id !== transferId
-      );
-      
-      // Save back to localStorage
-      localStorage.setItem('transferHistory', JSON.stringify(updatedTransfers));
-      
+      const { error } = await supabase
+        .from('transfer_history')
+        .delete()
+        .eq('id', transferId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting transfer:', error);
+        return;
+      }
+
       // Update local state
       setTransfers(prev => prev.filter(transfer => transfer.id !== transferId));
     } catch (error) {

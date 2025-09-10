@@ -125,7 +125,14 @@ const Index = () => {
         setTransferData({
           ...parsedData,
           date: new Date(parsedData.date),
-          effectiveDate: new Date(parsedData.effectiveDate)
+          effectiveDate: new Date(parsedData.effective_date || parsedData.effectiveDate),
+          transactionStatus: parsedData.transaction_status || parsedData.transactionStatus,
+          startingPercentage: parsedData.starting_percentage || parsedData.startingPercentage,
+          transactionId: parsedData.transaction_id || parsedData.transactionId,
+          recipientReference: parsedData.recipient_reference || parsedData.recipientReference,
+          payFromAccount: parsedData.pay_from_account || parsedData.payFromAccount,
+          transferMode: parsedData.transfer_mode || parsedData.transferMode,
+          recipientBank: parsedData.recipient_bank || parsedData.recipientBank
         });
         // Clear the edit data after loading
         localStorage.removeItem('editTransferData');
