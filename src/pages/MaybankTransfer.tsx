@@ -99,9 +99,9 @@ const MaybankTransfer = () => {
               <div>
                 <div className="text-gray-700 mb-1" style={{ fontSize: '15px' }}>Transfer To <span className="font-bold">{transferData.name}</span></div>
                 <div className="text-gray-600" style={{ fontSize: '13px' }}>{transferData.account}</div>
-                <div className="text-sm mt-3" style={{ color: '#474747' }}>{transferData.currency} {transferData.amount}</div>
+                <div className="text-sm mt-1" style={{ color: '#474747' }}>{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12" style={{ marginTop: '-15px', marginRight: '-5px' }}>
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12" style={{ marginTop: '-17px' }}>
                 <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-7 h-7" />
               </Button>
             </div>
