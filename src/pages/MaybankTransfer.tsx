@@ -97,7 +97,7 @@ const MaybankTransfer = () => {
             <div className="flex items-start justify-between mb-2">
               <div>
                 <div className="text-gray-700 text-sm mb-1">Transfer To <span className="font-bold">{transferData.name}</span></div>
-                <div className="text-gray-600 text-sm">{transferData.account}</div>
+                <div className="text-gray-600" style={{ fontSize: '12px' }}>{transferData.account}</div>
                 <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
               <Button variant="ghost" size="lg" className="text-gray-400 hover:text-gray-600 p-2">
