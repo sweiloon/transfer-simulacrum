@@ -79,7 +79,7 @@ const MaybankTransfer = () => {
       <div className="max-w-4xl mx-auto px-4 py-8 relative">
 
         {/* Transfer From Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-2">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <div className="text-gray-700" style={{ fontSize: '16px' }}>Transfer From <span className="font-bold">Savings Account-i</span></div>
@@ -92,7 +92,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Transfer To Section */}
-        <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div className="rounded-lg shadow-sm border border-gray-200 mb-0" style={{ backgroundColor: '#f7f7f7' }}>
           <div className="p-6">
             <div className="flex items-start justify-between mb-2">
               <div>
@@ -100,17 +100,15 @@ const MaybankTransfer = () => {
                 <div className="text-gray-600 text-sm">{transferData.account}</div>
                 <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 mt-0">
-                <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-4 h-4" />
+              <Button variant="ghost" size="lg" className="text-gray-400 hover:text-gray-600 p-2">
+                <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-6 h-6" />
               </Button>
             </div>
           </div>
           <div className="border-b-2 border-yellow-400"></div>
-        </div>
-
-        {/* Transfer Details Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-2 -mt-1">
-          <div className="p-6">
+          
+          {/* Transfer Details Section - now connected */}
+          <div className="p-6 bg-white">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-800 text-sm font-medium">Recipient's bank</span>
