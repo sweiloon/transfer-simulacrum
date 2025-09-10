@@ -154,7 +154,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Action Buttons - moved much lower */}
-        <div className="flex justify-center space-x-4 mt-16">
+        <div className="flex justify-center space-x-4 mt-24">
           <Button
             variant="outline"
             onClick={() => navigate('/')}
@@ -171,7 +171,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Back to Form Button */}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-8">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
