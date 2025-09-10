@@ -6,17 +6,23 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, CreditCard, Trash2, Building2, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const TransferHistory = () => {
   const { transfers, deleteTransfer } = useTransferHistory();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Redirect if not logged in
+  // Redirect if not logged in and handle loading
   useEffect(() => {
     if (!user) {
       navigate('/auth');
+    } else {
+      // Simulate loading for transfer history
+      const timer = setTimeout(() => setIsLoading(false), 800);
+      return () => clearTimeout(timer);
     }
   }, [user, navigate]);
 
@@ -50,9 +56,14 @@ const TransferHistory = () => {
     navigate('/');
   };
 
-  const handleDeleteTransfer = (transferId: string) => {
+  const handleDeleteTransfer = async (transferId: string) => {
     if (confirm('Are you sure you want to delete this transfer from history?')) {
-      deleteTransfer(transferId);
+      setDeletingId(transferId);
+      try {
+        await deleteTransfer(transferId);
+      } finally {
+        setDeletingId(null);
+      }
     }
   };
 
@@ -60,6 +71,18 @@ const TransferHistory = () => {
     const numAmount = parseFloat(amount);
     return `${currency} ${numAmount.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
+
+  // Show loading spinner
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-4 md:p-6 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground">Loading transfer history...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
@@ -146,10 +169,15 @@ const TransferHistory = () => {
                           e.stopPropagation();
                           handleDeleteTransfer(transfer.id);
                         }}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        disabled={deletingId === transfer.id}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                         title="Delete Transfer"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {deletingId === transfer.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </div>

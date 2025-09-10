@@ -235,7 +235,10 @@ const Auth = () => {
                 disabled={!isFormValid() || isLoading}
               >
                 {isLoading ? (
-                  "Loading..."
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    {isSignIn ? "Signing in..." : "Creating account..."}
+                  </>
                 ) : isSignIn ? (
                   "Sign In"
                 ) : (

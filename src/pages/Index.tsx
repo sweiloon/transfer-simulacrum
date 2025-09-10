@@ -80,6 +80,8 @@ const Index = () => {
   const { user, logout } = useAuth();
   const { addTransfer } = useTransferHistory();
   const [activeForm, setActiveForm] = useState<'transfer' | 'ctos'>('transfer');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [transferData, setTransferData] = useState<TransferData>({
     bank: '',
     name: '',
@@ -142,35 +144,46 @@ const Index = () => {
     }
   }, []);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!user) {
       navigate('/auth');
       return;
     }
 
-    if (activeForm === 'transfer') {
-      // Save transfer to history
-      addTransfer(transferData);
-      
-      // Store transfer data in localStorage to access on loading page
-      localStorage.setItem('transferData', JSON.stringify(transferData));
-      
-      // Navigate to Maybank-specific page if Maybank is selected
-      if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
-        navigate('/maybank-transfer');
+    setIsGenerating(true);
+    
+    try {
+      if (activeForm === 'transfer') {
+        // Save transfer to history
+        await addTransfer(transferData);
+        
+        // Store transfer data in localStorage to access on loading page
+        localStorage.setItem('transferData', JSON.stringify(transferData));
+        
+        // Navigate to Maybank-specific page if Maybank is selected
+        if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+          navigate('/maybank-transfer');
+        } else {
+          navigate('/transfer-loading');
+        }
       } else {
-        navigate('/transfer-loading');
+        // Store CTOS data in localStorage to access on report page
+        localStorage.setItem('ctosData', JSON.stringify(ctosData));
+        navigate('/ctos-report');
       }
-    } else {
-      // Store CTOS data in localStorage to access on report page
-      localStorage.setItem('ctosData', JSON.stringify(ctosData));
-      navigate('/ctos-report');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate('/auth');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const isFormValid = () => {
@@ -233,9 +246,14 @@ const Index = () => {
                   variant="ghost"
                   size="icon"
                   onClick={handleLogout}
+                  disabled={isLoggingOut}
                   className="h-8 w-8"
                 >
-                  <LogOut className="h-4 w-4" />
+                  {isLoggingOut ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                  ) : (
+                    <LogOut className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             )}
@@ -685,10 +703,15 @@ const Index = () => {
             {/* Generate Button */}
             <Button 
               onClick={handleGenerate}
-              disabled={!isFormValid()}
+              disabled={!isFormValid() || isGenerating}
               className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-base transition-all duration-200 disabled:opacity-50 disabled:hover:bg-gray-900"
             >
-              {activeForm === 'transfer' ? (
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
+                  Generating...
+                </>
+              ) : activeForm === 'transfer' ? (
                 <>
                   <CreditCard className="mr-2 h-5 w-5" />
                   Generate Transfer

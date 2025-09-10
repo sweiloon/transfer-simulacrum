@@ -164,9 +164,17 @@ const MaybankTransfer = () => {
           </Button>
           <Button
             onClick={handleTransfer}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white"
+            disabled={isLoading}
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
           >
-            Confirm Transfer
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                Processing...
+              </>
+            ) : (
+              'Confirm Transfer'
+            )}
           </Button>
         </div>
 
