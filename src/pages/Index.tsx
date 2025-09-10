@@ -77,7 +77,7 @@ const payFromAccounts = [
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const { addTransfer } = useTransferHistory();
   const [activeForm, setActiveForm] = useState<'transfer' | 'ctos'>('transfer');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -113,10 +113,11 @@ const Index = () => {
 
   // Redirect to auth if not logged in
   useEffect(() => {
-    if (!user) {
+    if (!isLoading && !user) {
+      console.log('Index page: User not logged in, redirecting to auth');
       navigate('/auth', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, isLoading]);
 
   // Load transfer data if editing from history
   useEffect(() => {

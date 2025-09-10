@@ -30,10 +30,11 @@ const Auth = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (!isLoading && user) {
+      console.log('Auth page: User is logged in, redirecting to home');
       navigate('/', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
