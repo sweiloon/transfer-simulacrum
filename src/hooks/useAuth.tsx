@@ -28,15 +28,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state change:', event, session?.user?.email);
+        if (!isMounted) return;
+        
         setSession(session);
         
         if (session?.user) {
           // Defer profile fetching to avoid blocking the auth state update
           setTimeout(async () => {
+            if (!isMounted) return;
+            
             try {
               const { data: profile } = await supabase
                 .from('profiles')
@@ -44,22 +50,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 .eq('user_id', session.user.id)
                 .single();
 
-              setUser({
+              const userData = {
                 id: session.user.id,
                 email: session.user.email || '',
-                name: profile?.display_name || session.user.email || ''
-              });
+                name: profile?.display_name || session.user.user_metadata?.name || session.user.email || ''
+              };
+              
+              if (isMounted) {
+                setUser(userData);
+                console.log('User set from profile:', userData);
+              }
             } catch (error) {
               // Fallback if profile doesn't exist
-              setUser({
+              const userData = {
                 id: session.user.id,
                 email: session.user.email || '',
-                name: session.user.email || ''
-              });
+                name: session.user.user_metadata?.name || session.user.email || ''
+              };
+              
+              if (isMounted) {
+                setUser(userData);
+                console.log('User set with fallback:', userData);
+              }
             }
           }, 0);
         } else {
           setUser(null);
+          console.log('User cleared');
         }
         setIsLoading(false);
       }
@@ -67,10 +84,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // The auth state change listener will handle this
+      console.log('Initial session check:', session?.user?.email);
+      if (!isMounted) return;
+      
+      // The auth state change listener will handle the session
+      // But we need to set loading to false if no session
+      if (!session) {
+        setIsLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
