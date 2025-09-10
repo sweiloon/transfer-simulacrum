@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,10 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight } from 'lucide-react';
+import { CalendarIcon, CreditCard, Building2, FileText, ToggleLeft, ToggleRight, History, LogOut, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useTransferHistory } from '@/hooks/useTransferHistory';
 
 interface TransferData {
   bank: string;
@@ -75,6 +77,8 @@ const payFromAccounts = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { addTransfer } = useTransferHistory();
   const [activeForm, setActiveForm] = useState<'transfer' | 'ctos'>('transfer');
   const [transferData, setTransferData] = useState<TransferData>({
     bank: '',
@@ -105,8 +109,23 @@ const Index = () => {
     score: ''
   });
 
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
+
   const handleGenerate = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
     if (activeForm === 'transfer') {
+      // Save transfer to history
+      addTransfer(transferData);
+      
       // Store transfer data in localStorage to access on loading page
       localStorage.setItem('transferData', JSON.stringify(transferData));
       
@@ -121,6 +140,11 @@ const Index = () => {
       localStorage.setItem('ctosData', JSON.stringify(ctosData));
       navigate('/ctos-report');
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
   };
 
   const isFormValid = () => {
@@ -154,16 +178,48 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-background flex">
       {/* Left side - Form */}
       <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-md space-y-8">
+          {/* Top Navigation */}
+          <div className="flex items-center justify-between">
+            {activeForm === 'transfer' && (
+              <Button
+                variant="outline"
+                onClick={() => navigate('/transfer-history')}
+                className="flex items-center gap-2"
+              >
+                <History className="h-4 w-4" />
+                History
+              </Button>
+            )}
+            {activeForm !== 'transfer' && <div />}
+            
+            {/* User Info and Logout */}
+            {user && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  {user.name}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="h-8 w-8"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
           {/* Toggle Button */}
           <div className="flex items-center justify-center mb-8">
             <Button
               variant="outline"
               onClick={() => setActiveForm(activeForm === 'transfer' ? 'ctos' : 'transfer')}
-              className="flex items-center gap-2 h-12 px-6 border-gray-300 bg-gray-50 text-gray-900 hover:bg-gray-100"
+              className="flex items-center gap-2 h-12 px-6"
             >
               {activeForm === 'transfer' ? (
                 <>
@@ -185,15 +241,15 @@ const Index = () => {
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               {activeForm === 'transfer' ? (
-                <Building2 className="h-8 w-8 text-gray-900" />
+                <Building2 className="h-8 w-8 text-foreground" />
               ) : (
-                <FileText className="h-8 w-8 text-gray-900" />
+                <FileText className="h-8 w-8 text-foreground" />
               )}
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               {activeForm === 'transfer' ? 'Payment Transfer' : 'CTOS Report'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               {activeForm === 'transfer' 
                 ? 'Generate your bank transfer details' 
                 : 'Generate your credit score report'
@@ -207,11 +263,11 @@ const Index = () => {
               <>
                 {/* Bank Selection */}
                 <div className="space-y-2">
-                  <Label htmlFor="bank" className="text-sm font-medium text-gray-900">
-                    Transfer Bank <span className="text-red-500">*</span>
+                  <Label htmlFor="bank" className="text-sm font-medium text-foreground">
+                    Transfer Bank <span className="text-destructive">*</span>
                   </Label>
                   <Select value={transferData.bank} onValueChange={(value) => setTransferData({...transferData, bank: value})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select your bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-64">
@@ -226,22 +282,22 @@ const Index = () => {
 
                 {/* Transferer Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium text-gray-900">
-                    Transferer Name <span className="text-red-500">*</span>
+                  <Label htmlFor="name" className="text-sm font-medium text-foreground">
+                    Transferer Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="name"
                     value={transferData.name}
                     onChange={(e) => setTransferData({...transferData, name: e.target.value})}
                     placeholder="Enter your full name"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    className="h-12"
                   />
                 </div>
 
                 {/* Transaction ID - Hidden for Maybank */}
                 {transferData.bank !== 'Malayan Banking Berhad (Maybank)' && (
                   <div className="space-y-2">
-                    <Label htmlFor="transactionId" className="text-sm font-medium text-gray-900">
+                    <Label htmlFor="transactionId" className="text-sm font-medium text-foreground">
                       Transaction ID
                     </Label>
                     <Input
@@ -249,7 +305,7 @@ const Index = () => {
                       value={transferData.transactionId}
                       onChange={(e) => setTransferData({...transferData, transactionId: e.target.value})}
                       placeholder="TXN240805AB123456"
-                      className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                      className="h-12"
                     />
                   </div>
                 )}
@@ -257,7 +313,7 @@ const Index = () => {
                 {/* Date and Time */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-900">
+                    <Label className="text-sm font-medium text-foreground">
                       Transfer Date
                     </Label>
                     <Popover>
@@ -265,8 +321,8 @@ const Index = () => {
                         <Button
                           variant="outline"
                           className={cn(
-                            "h-12 justify-start text-left font-normal border-gray-300 bg-gray-50 text-gray-900 hover:bg-gray-100 focus:border-gray-900 focus:ring-gray-900",
-                            !transferData.date && "text-gray-500"
+                            "h-12 justify-start text-left font-normal",
+                            !transferData.date && "text-muted-foreground"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -286,7 +342,7 @@ const Index = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="time" className="text-sm font-medium text-gray-900">
+                    <Label htmlFor="time" className="text-sm font-medium text-foreground">
                       Transfer Time
                     </Label>
                     <Input
@@ -294,7 +350,7 @@ const Index = () => {
                       type="time"
                       value={transferData.time}
                       onChange={(e) => setTransferData({...transferData, time: e.target.value})}
-                      className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900"
+                      className="h-12"
                       step="1"
                     />
                   </div>
@@ -302,11 +358,11 @@ const Index = () => {
 
                 {/* Transfer Type */}
                 <div className="space-y-2">
-                  <Label htmlFor="type" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="type" className="text-sm font-medium text-foreground">
                     Transfer Type
                   </Label>
                   <Select value={transferData.type} onValueChange={(value) => setTransferData({...transferData, type: value})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select transfer type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -321,11 +377,11 @@ const Index = () => {
 
                 {/* Transaction Status */}
                 <div className="space-y-2">
-                  <Label htmlFor="status" className="text-sm font-medium text-gray-900">
-                    Transaction Status <span className="text-red-500">*</span>
+                  <Label htmlFor="status" className="text-sm font-medium text-foreground">
+                    Transaction Status <span className="text-destructive">*</span>
                   </Label>
                   <Select value={transferData.transactionStatus} onValueChange={(value) => setTransferData({...transferData, transactionStatus: value, startingPercentage: value === 'Processing' ? transferData.startingPercentage : ''})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select transaction status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -345,7 +401,7 @@ const Index = () => {
                 {/* Starting Percentage - Only show for Processing */}
                 {transferData.transactionStatus === 'Processing' && (
                   <div className="space-y-2">
-                    <Label htmlFor="percentage" className="text-sm font-medium text-gray-900">
+                    <Label htmlFor="percentage" className="text-sm font-medium text-foreground">
                       Starting Percentage
                     </Label>
                     <Input
@@ -356,32 +412,32 @@ const Index = () => {
                       value={transferData.startingPercentage}
                       onChange={(e) => setTransferData({...transferData, startingPercentage: e.target.value})}
                       placeholder="Enter percentage (1-100)"
-                      className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                      className="h-12"
                     />
                   </div>
                 )}
 
                 {/* Bank Account */}
                 <div className="space-y-2">
-                  <Label htmlFor="account" className="text-sm font-medium text-gray-900">
-                    Bank Account Number <span className="text-red-500">*</span>
+                  <Label htmlFor="account" className="text-sm font-medium text-foreground">
+                    Bank Account Number <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="account"
                     value={transferData.account}
                     onChange={(e) => setTransferData({...transferData, account: e.target.value.replace(/\D/g, '')})}
                     placeholder="Enter account number (numbers only)"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    className="h-12"
                   />
                 </div>
 
                 {/* Recipient's Bank */}
                 <div className="space-y-2">
-                  <Label htmlFor="recipientBank" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="recipientBank" className="text-sm font-medium text-foreground">
                     Recipient's Bank
                   </Label>
                   <Select value={transferData.recipientBank} onValueChange={(value) => setTransferData({...transferData, recipientBank: value})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select recipient's bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-64">
@@ -396,12 +452,12 @@ const Index = () => {
 
                 {/* Amount */}
                 <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-sm font-medium text-gray-900">
-                    Transfer Amount <span className="text-red-500">*</span>
+                  <Label htmlFor="amount" className="text-sm font-medium text-foreground">
+                    Transfer Amount <span className="text-destructive">*</span>
                   </Label>
                   <div className="flex gap-3">
                     <Select value={transferData.currency} onValueChange={(value) => setTransferData({...transferData, currency: value})}>
-                      <SelectTrigger className="w-24 h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                      <SelectTrigger className="w-24 h-12">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -414,7 +470,7 @@ const Index = () => {
                       value={transferData.amount}
                       onChange={(e) => setTransferData({...transferData, amount: e.target.value.replace(/[^\d.]/g, '')})}
                       placeholder="0.00"
-                      className="flex-1 h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                      className="flex-1 h-12"
                     />
                   </div>
                 </div>
@@ -429,17 +485,17 @@ const Index = () => {
                     value={transferData.recipientReference}
                     onChange={(e) => setTransferData({...transferData, recipientReference: e.target.value})}
                     placeholder="Optional reference note"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    className="h-12"
                   />
                 </div>
 
                 {/* Pay From Account */}
                 <div className="space-y-2">
-                  <Label htmlFor="payFromAccount" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="payFromAccount" className="text-sm font-medium text-foreground">
                     Pay From Account
                   </Label>
                   <Select value={transferData.payFromAccount} onValueChange={(value) => setTransferData({...transferData, payFromAccount: value})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
                     <SelectContent>
@@ -454,11 +510,11 @@ const Index = () => {
 
                 {/* Transfer Mode */}
                 <div className="space-y-2">
-                  <Label htmlFor="transferMode" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="transferMode" className="text-sm font-medium text-foreground">
                     Transfer Mode
                   </Label>
                   <Select value={transferData.transferMode} onValueChange={(value) => setTransferData({...transferData, transferMode: value})}>
-                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Select transfer mode" />
                     </SelectTrigger>
                     <SelectContent>
@@ -473,7 +529,7 @@ const Index = () => {
 
                 {/* Effective Date */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-900">
+                  <Label className="text-sm font-medium text-foreground">
                     Effective Date
                   </Label>
                   <Popover>
@@ -481,8 +537,8 @@ const Index = () => {
                       <Button
                         variant="outline"
                         className={cn(
-                          "h-12 justify-start text-left font-normal border-gray-300 bg-gray-50 text-gray-900 hover:bg-gray-100 focus:border-gray-900 focus:ring-gray-900",
-                          !transferData.effectiveDate && "text-gray-500"
+                          "h-12 justify-start text-left font-normal",
+                          !transferData.effectiveDate && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -505,28 +561,28 @@ const Index = () => {
               <>
                 {/* CTOS Form Fields */}
                 <div className="space-y-2">
-                  <Label htmlFor="ctosName" className="text-sm font-medium text-gray-900">
-                    Name (Your input) <span className="text-red-500">*</span>
+                  <Label htmlFor="ctosName" className="text-sm font-medium text-foreground">
+                    Name (Your input) <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="ctosName"
                     value={ctosData.name}
                     onChange={(e) => setCTOSData({...ctosData, name: e.target.value})}
                     placeholder="SING WEI LOON"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="newId" className="text-sm font-medium text-gray-900">
-                    New ID / Old ID (Your input) <span className="text-red-500">*</span>
+                  <Label htmlFor="newId" className="text-sm font-medium text-foreground">
+                    New ID / Old ID (Your input) <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="newId"
                     value={ctosData.newId}
                     onChange={(e) => setCTOSData({...ctosData, newId: e.target.value})}
                     placeholder="950206015427 /-"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    className="h-12"
                   />
                 </div>
 
