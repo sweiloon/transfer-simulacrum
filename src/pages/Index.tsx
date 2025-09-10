@@ -116,25 +116,6 @@ const Index = () => {
     }
   }, [user, navigate]);
 
-  // Load transfer data if editing from history
-  useEffect(() => {
-    const editData = localStorage.getItem('editTransferData');
-    if (editData) {
-      try {
-        const parsedData = JSON.parse(editData);
-        setTransferData({
-          ...parsedData,
-          date: new Date(parsedData.date),
-          effectiveDate: new Date(parsedData.effectiveDate)
-        });
-        // Clear the edit data after loading
-        localStorage.removeItem('editTransferData');
-      } catch (error) {
-        console.error('Error loading edit transfer data:', error);
-      }
-    }
-  }, []);
-
   const handleGenerate = () => {
     if (!user) {
       navigate('/auth');
