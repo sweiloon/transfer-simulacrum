@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useTransferHistory } from '@/hooks/useTransferHistory';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, CreditCard, Trash2, Building2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, CreditCard, Trash2, Building2, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
@@ -31,6 +31,12 @@ const TransferHistory = () => {
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const handleViewTransfer = (transfer: any) => {
+    // Store the transfer data to be loaded in the main form
+    localStorage.setItem('editTransferData', JSON.stringify(transfer));
+    navigate('/');
   };
 
   const handleDeleteTransfer = (transferId: string) => {
@@ -83,8 +89,9 @@ const TransferHistory = () => {
           /* Transfer List */
           <div className="space-y-4">
             {transfers.map((transfer) => (
-              <Card key={transfer.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
+              <Card key={transfer.id} className="hover:shadow-md transition-shadow cursor-pointer group">
+                <div onClick={() => handleViewTransfer(transfer)}>
+                  <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <Building2 className="h-5 w-5 text-primary" />
@@ -112,8 +119,24 @@ const TransferHistory = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDeleteTransfer(transfer.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewTransfer(transfer);
+                        }}
+                        className="text-primary hover:text-primary hover:bg-primary/10"
+                        title="View Transfer"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTransfer(transfer.id);
+                        }}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        title="Delete Transfer"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -179,7 +202,15 @@ const TransferHistory = () => {
                       </div>
                     </div>
                   )}
+                  
+                  <div className="pt-2 border-t flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
+                      Click to view and edit this transfer
+                    </span>
+                    <Eye className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
                 </CardContent>
+              </div>
               </Card>
             ))}
           </div>
