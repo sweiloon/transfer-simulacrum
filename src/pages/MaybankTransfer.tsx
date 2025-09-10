@@ -61,13 +61,6 @@ const MaybankTransfer = () => {
           <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             <p className="text-gray-600">Processing your transfer...</p>
-            <Button
-              variant="outline"
-              onClick={() => setIsLoading(false)}
-              className="mt-4"
-            >
-              Cancel
-            </Button>
           </div>
         </div>
       )}
@@ -89,17 +82,17 @@ const MaybankTransfer = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <div className="text-gray-700 text-sm font-medium">Transfer From Savings Account-i</div>
+              <div className="text-gray-700 text-sm font-bold">Transfer From Savings Account-i</div>
             </div>
-            <div className="text-right">
-              <div className="text-gray-600 text-sm">Available Balance</div>
-              <div className="text-teal-600 font-medium">RM 11.47</div>
+            <div className="flex items-center gap-4">
+              <span className="text-gray-600 text-sm">Available Balance</span>
+              <span className="text-teal-600 font-medium">RM 23,047.58</span>
             </div>
           </div>
         </div>
 
         {/* Transfer To Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -108,10 +101,11 @@ const MaybankTransfer = () => {
                 <div className="text-red-600 font-medium text-lg mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
               <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-                <Edit2 className="w-4 h-4" />
+                <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-4 h-4" />
               </Button>
             </div>
           </div>
+          <div className="border-b-2 border-yellow-400"></div>
         </div>
 
         {/* Transfer Details Section */}
@@ -119,20 +113,20 @@ const MaybankTransfer = () => {
           <div className="p-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 text-sm">Recipient's bank</span>
-                <span className="text-gray-700 text-sm font-medium">PUBLIC BANK</span>
+                <span className="text-gray-800 text-sm font-medium">Recipient's bank</span>
+                <span className="text-gray-500 text-sm">PUBLIC BANK</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 text-sm">Transaction Type</span>
-                <span className="text-gray-700 text-sm font-medium">{transferData.type}</span>
+                <span className="text-gray-800 text-sm font-medium">Transaction Type</span>
+                <span className="text-gray-500 text-sm">Funds Transfer</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 text-sm">Transfer Mode</span>
-                <span className="text-gray-700 text-sm font-medium">{transferData.transferMode}</span>
+                <span className="text-gray-800 text-sm font-medium">Transfer Mode</span>
+                <span className="text-gray-500 text-sm">DuitNow Transfer</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 text-sm">Effective date</span>
-                <span className="text-gray-700 text-sm font-medium">
+                <span className="text-gray-800 text-sm font-medium">Effective date</span>
+                <span className="text-gray-500 text-sm">
                   Today {new Date(transferData.effectiveDate).toLocaleDateString('en-GB', {
                     day: '2-digit',
                     month: 'short',
@@ -141,8 +135,8 @@ const MaybankTransfer = () => {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 text-sm">Recipient Reference</span>
-                <span className="text-gray-700 text-sm font-medium">
+                <span className="text-gray-800 text-sm font-medium">Recipient Reference</span>
+                <span className="text-gray-500 text-sm">
                   {transferData.recipientReference || 'cola'}
                 </span>
               </div>
@@ -153,8 +147,8 @@ const MaybankTransfer = () => {
         {/* Total Amount Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16">
           <div className="px-6 py-4 flex items-center justify-between">
-            <div className="text-gray-900 font-medium text-lg">Total Amount</div>
-            <div className="text-red-600 font-bold text-xl">{transferData.currency} {transferData.amount}</div>
+            <div className="text-gray-800 text-sm font-medium">Total Amount</div>
+            <div className="text-red-600 text-sm">{transferData.currency} {transferData.amount}</div>
           </div>
         </div>
 
