@@ -14,6 +14,7 @@ interface TransferData {
   type: string;
   effectiveDate: Date;
   recipientReference: string;
+  recipientBank: string;
 }
 
 const MaybankTransfer = () => {
@@ -112,7 +113,9 @@ const MaybankTransfer = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span style={{ color: '#474747' }} className="text-sm font-normal">Recipient's bank</span>
-                <span className="text-gray-500 text-sm">PUBLIC BANK</span>
+                <span className="text-gray-500 text-sm">
+                  {transferData.recipientBank || 'PUBLIC BANK'}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span style={{ color: '#474747' }} className="text-sm font-normal">Transaction Type</span>

@@ -28,6 +28,7 @@ interface TransferData {
   payFromAccount: string;
   transferMode: string;
   effectiveDate: Date;
+  recipientBank: string;
 }
 
 interface CTOSData {
@@ -90,7 +91,8 @@ const Index = () => {
     recipientReference: '',
     payFromAccount: 'Savings Account-i',
     transferMode: 'Funds Transfer',
-    effectiveDate: new Date()
+    effectiveDate: new Date(),
+    recipientBank: ''
   });
   
   const [ctosData, setCTOSData] = useState<CTOSData>({
@@ -371,6 +373,25 @@ const Index = () => {
                     placeholder="Enter account number (numbers only)"
                     className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
                   />
+                </div>
+
+                {/* Recipient's Bank */}
+                <div className="space-y-2">
+                  <Label htmlFor="recipientBank" className="text-sm font-medium text-gray-900">
+                    Recipient's Bank
+                  </Label>
+                  <Select value={transferData.recipientBank} onValueChange={(value) => setTransferData({...transferData, recipientBank: value})}>
+                    <SelectTrigger className="h-12 border-gray-300 bg-gray-50 text-gray-900 focus:border-gray-900 focus:ring-gray-900">
+                      <SelectValue placeholder="Select recipient's bank" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-64">
+                      {banks.map((bank) => (
+                        <SelectItem key={bank} value={bank} className="py-3">
+                          {bank}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Amount */}
