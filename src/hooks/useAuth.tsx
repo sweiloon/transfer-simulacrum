@@ -65,9 +65,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     );
 
-    // THEN check for existing session
+    // THEN check for existing session to restore state
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // The auth state change listener will handle this
+      console.log('Initial session check:', session?.user?.email || 'No session');
+      if (session) {
+        setSession(session);
+        if (session.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.email || ''
+          });
+        }
+      }
+      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();

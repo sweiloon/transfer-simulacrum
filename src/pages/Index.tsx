@@ -114,7 +114,7 @@ const Index = () => {
   // Redirect to auth if not logged in
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     }
   }, [user, navigate]);
 
@@ -194,7 +194,7 @@ const Index = () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     } finally {
       setIsLoggingOut(false);
     }
