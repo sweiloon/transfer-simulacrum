@@ -30,21 +30,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
+        
         if (session?.user) {
-          // Get user profile data
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('display_name')
-            .eq('user_id', session.user.id)
-            .single();
+          // Defer profile fetching to avoid blocking the auth state update
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('display_name')
+                .eq('user_id', session.user.id)
+                .single();
 
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            name: profile?.display_name || session.user.email || ''
-          });
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                name: profile?.display_name || session.user.email || ''
+              });
+            } catch (error) {
+              // Fallback if profile doesn't exist
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                name: session.user.email || ''
+              });
+            }
+          }, 0);
         } else {
           setUser(null);
         }
@@ -62,6 +75,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      setIsLoading(true);
+      
       // Input sanitization and validation
       const sanitizedEmail = email.toLowerCase().trim();
       const sanitizedName = name.trim();
@@ -69,17 +84,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(sanitizedEmail)) {
+        setIsLoading(false);
         return { success: false, error: 'Please enter a valid email address' };
       }
       
       // Name validation
       if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+        setIsLoading(false);
         return { success: false, error: 'Name must be between 2 and 50 characters' };
       }
       
       const redirectUrl = `${window.location.origin}/`;
       
-      const { data, error } = await supabase.auth.signUp({
+      // Add timeout to prevent stuck states
+      const registrationPromise = supabase.auth.signUp({
         email: sanitizedEmail,
         password,
         options: {
@@ -91,41 +109,63 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       });
 
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Registration timeout')), 30000)
+      );
+
+      const { data, error } = await Promise.race([registrationPromise, timeoutPromise]) as any;
+
       if (error) {
+        setIsLoading(false);
         return { success: false, error: error.message };
       }
 
       // Check if email confirmation is required
       if (data.user && !data.session) {
+        setIsLoading(false);
         return { 
           success: true, 
           error: 'Please check your email and click the confirmation link to activate your account.' 
         };
       }
 
+      setIsLoading(false);
       return { success: true };
     } catch (error) {
-      return { success: false, error: 'Registration failed' };
+      setIsLoading(false);
+      console.error('Registration error:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Registration failed' };
     }
   };
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      setIsLoading(true);
+      
       // Input sanitization
       const sanitizedEmail = email.toLowerCase().trim();
       
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(sanitizedEmail)) {
+        setIsLoading(false);
         return { success: false, error: 'Please enter a valid email address' };
       }
       
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Add timeout to prevent stuck states
+      const loginPromise = supabase.auth.signInWithPassword({
         email: sanitizedEmail,
         password
       });
 
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Login timeout')), 30000)
+      );
+
+      const { data, error } = await Promise.race([loginPromise, timeoutPromise]) as any;
+
       if (error) {
+        setIsLoading(false);
         // Provide more specific error messages
         if (error.message.includes('email_not_confirmed')) {
           return { 
@@ -142,9 +182,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: false, error: error.message };
       }
 
+      // Don't manually set loading to false here - let the auth state change handle it
       return { success: true };
     } catch (error) {
-      return { success: false, error: 'Login failed' };
+      setIsLoading(false);
+      console.error('Login error:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Login failed' };
     }
   };
 
