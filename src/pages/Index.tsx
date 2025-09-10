@@ -154,23 +154,37 @@ const Index = () => {
     
     try {
       if (activeForm === 'transfer') {
-        // Save transfer to history
-        await addTransfer(transferData);
-        
-        // Store transfer data in localStorage to access on loading page
-        localStorage.setItem('transferData', JSON.stringify(transferData));
-        
-        // Navigate to Maybank-specific page if Maybank is selected
-        if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
-          navigate('/maybank-transfer');
-        } else {
-          navigate('/transfer-loading');
+        try {
+          // Save transfer to history
+          await addTransfer(transferData);
+          
+          // Store transfer data in localStorage to access on loading page
+          localStorage.setItem('transferData', JSON.stringify(transferData));
+          
+          // Navigate to Maybank-specific page if Maybank is selected
+          if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+            navigate('/maybank-transfer');
+          } else {
+            navigate('/transfer-loading');
+          }
+        } catch (error) {
+          console.error('Error saving transfer:', error);
+          // Still navigate even if saving fails
+          localStorage.setItem('transferData', JSON.stringify(transferData));
+          
+          if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+            navigate('/maybank-transfer');
+          } else {
+            navigate('/transfer-loading');
+          }
         }
       } else {
         // Store CTOS data in localStorage to access on report page
         localStorage.setItem('ctosData', JSON.stringify(ctosData));
         navigate('/ctos-report');
       }
+    } catch (error) {
+      console.error('Error generating:', error);
     } finally {
       setIsGenerating(false);
     }
