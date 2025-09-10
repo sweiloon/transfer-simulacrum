@@ -33,12 +33,20 @@ const MaybankTransfer = () => {
 
   const handleTransfer = () => {
     setIsLoading(true);
-    // Simulate transfer processing
-    setTimeout(() => {
-      setIsLoading(false);
-      // Navigate to success page or show success message
-    }, 3000);
   };
+
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isLoading) {
+        setIsLoading(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isLoading]);
 
   if (!transferData) {
     return null;
@@ -49,7 +57,7 @@ const MaybankTransfer = () => {
     <div className="min-h-screen bg-gray-100 relative">
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             <p className="text-gray-600">Processing your transfer...</p>
@@ -76,81 +84,67 @@ const MaybankTransfer = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 relative">
-        {/* Back Button - moved to top right */}
-        <div className="absolute top-0 right-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Form
-          </Button>
-        </div>
 
         {/* Transfer From Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <div className="text-gray-600 text-sm">Transfer From</div>
-              <div className="text-gray-900 font-medium text-lg">{transferData.payFromAccount}</div>
+              <div className="text-gray-700 text-sm font-medium">Transfer From Savings Account-i</div>
             </div>
             <div className="text-right">
               <div className="text-gray-600 text-sm">Available Balance</div>
-              <div className="text-blue-600 font-medium">RM 11.47</div>
+              <div className="text-teal-600 font-medium">RM 11.47</div>
             </div>
           </div>
         </div>
 
         {/* Transfer To Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
           <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <div>
-                <div className="text-gray-600 text-sm">Transfer To</div>
-                <div className="text-gray-900 font-medium text-lg">{transferData.name}</div>
+                <div className="text-gray-700 text-sm font-medium mb-1">Transfer To {transferData.name}</div>
                 <div className="text-gray-600 text-sm">{transferData.account}</div>
-                <div className="text-red-600 font-medium text-lg">{transferData.currency} {transferData.amount}</div>
+                <div className="text-red-600 font-medium text-lg mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
               <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
                 <Edit2 className="w-4 h-4" />
               </Button>
             </div>
-            
-            <div className="border-t border-yellow-400 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Recipient's bank</span>
-                    <span className="text-gray-900 font-medium">PUBLIC BANK</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Transaction Type</span>
-                    <span className="text-gray-900 font-medium">{transferData.type}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Transfer Mode</span>
-                    <span className="text-gray-900 font-medium">{transferData.transferMode}</span>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Effective date</span>
-                    <span className="text-gray-900 font-medium">
-                      Today {new Date(transferData.effectiveDate).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Recipient Reference</span>
-                    <span className="text-gray-900 font-medium">
-                      {transferData.recipientReference || 'cola'}
-                    </span>
-                  </div>
-                </div>
+          </div>
+        </div>
+
+        {/* Transfer Details Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+          <div className="p-6">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 text-sm">Recipient's bank</span>
+                <span className="text-gray-700 text-sm font-medium">PUBLIC BANK</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 text-sm">Transaction Type</span>
+                <span className="text-gray-700 text-sm font-medium">{transferData.type}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 text-sm">Transfer Mode</span>
+                <span className="text-gray-700 text-sm font-medium">{transferData.transferMode}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 text-sm">Effective date</span>
+                <span className="text-gray-700 text-sm font-medium">
+                  Today {new Date(transferData.effectiveDate).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 text-sm">Recipient Reference</span>
+                <span className="text-gray-700 text-sm font-medium">
+                  {transferData.recipientReference || 'cola'}
+                </span>
               </div>
             </div>
           </div>
@@ -178,6 +172,18 @@ const MaybankTransfer = () => {
             className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white"
           >
             Confirm Transfer
+          </Button>
+        </div>
+
+        {/* Back to Form Button */}
+        <div className="flex justify-center mt-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Form
           </Button>
         </div>
       </div>
