@@ -107,7 +107,13 @@ const Index = () => {
     if (activeForm === 'transfer') {
       // Store transfer data in localStorage to access on loading page
       localStorage.setItem('transferData', JSON.stringify(transferData));
-      navigate('/transfer-loading');
+      
+      // Navigate to Maybank-specific page if Maybank is selected
+      if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+        navigate('/maybank-transfer');
+      } else {
+        navigate('/transfer-loading');
+      }
     } else {
       // Store CTOS data in localStorage to access on report page
       localStorage.setItem('ctosData', JSON.stringify(ctosData));
@@ -230,19 +236,21 @@ const Index = () => {
                   />
                 </div>
 
-                {/* Transaction ID */}
-                <div className="space-y-2">
-                  <Label htmlFor="transactionId" className="text-sm font-medium text-gray-900">
-                    Transaction ID
-                  </Label>
-                  <Input
-                    id="transactionId"
-                    value={transferData.transactionId}
-                    onChange={(e) => setTransferData({...transferData, transactionId: e.target.value})}
-                    placeholder="TXN240805AB123456"
-                    className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
-                  />
-                </div>
+                {/* Transaction ID - Hidden for Maybank */}
+                {transferData.bank !== 'Malayan Banking Berhad (Maybank)' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="transactionId" className="text-sm font-medium text-gray-900">
+                      Transaction ID
+                    </Label>
+                    <Input
+                      id="transactionId"
+                      value={transferData.transactionId}
+                      onChange={(e) => setTransferData({...transferData, transactionId: e.target.value})}
+                      placeholder="TXN240805AB123456"
+                      className="h-12 border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                    />
+                  </div>
+                )}
 
                 {/* Date and Time */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -319,9 +327,15 @@ const Index = () => {
                       <SelectValue placeholder="Select transaction status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Cancelled" className="py-3">Cancelled</SelectItem>
-                      <SelectItem value="Processing" className="py-3">Processing</SelectItem>
-                      <SelectItem value="Successful" className="py-3">Successful</SelectItem>
+                      {transferData.bank === 'Malayan Banking Berhad (Maybank)' ? (
+                        <SelectItem value="Processing" className="py-3">Processing</SelectItem>
+                      ) : (
+                        <>
+                          <SelectItem value="Cancelled" className="py-3">Cancelled</SelectItem>
+                          <SelectItem value="Processing" className="py-3">Processing</SelectItem>
+                          <SelectItem value="Successful" className="py-3">Successful</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
