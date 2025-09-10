@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
 
 const Auth = () => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -109,17 +109,18 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen relative flex items-center justify-center p-4">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/lovable-uploads/1a293acf-e409-4b1e-b4ff-a5ddf3958568.png')`,
+        }}
+      />
+      <div className="absolute inset-0 bg-background/50 backdrop-blur-sm" />
+      
+      <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="text-center">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="mb-6 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
           <h1 className="text-3xl font-bold text-foreground">
             {isSignIn ? 'Welcome Back' : 'Create Account'}
           </h1>
@@ -128,7 +129,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <Card>
+        <Card className="bg-card/80 backdrop-blur-sm border-border/50">
           <CardHeader>
             <Tabs value={isSignIn ? 'signin' : 'signup'} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
