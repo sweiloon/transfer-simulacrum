@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeTransferData, validateTransferAmount } from '@/utils/sanitization';
 
 export interface TransferHistoryItem {
   id: string;
@@ -79,24 +80,34 @@ export const useTransferHistory = () => {
     if (!user) return null;
 
     try {
+      // Validate transfer amount
+      const amountValidation = validateTransferAmount(transferData.amount);
+      if (!amountValidation.isValid) {
+        console.error('Invalid transfer amount:', amountValidation.message);
+        return null;
+      }
+
+      // Sanitize transfer data
+      const sanitizedData = sanitizeTransferData(transferData);
+
       const newTransfer = {
         user_id: user.id,
-        bank: transferData.bank,
-        name: transferData.name,
-        date: transferData.date,
-        time: transferData.time,
-        type: transferData.type,
-        account: transferData.account,
-        amount: transferData.amount,
-        currency: transferData.currency,
-        transaction_status: transferData.transactionStatus,
-        starting_percentage: transferData.startingPercentage,
-        transaction_id: transferData.transactionId,
-        recipient_reference: transferData.recipientReference,
-        pay_from_account: transferData.payFromAccount,
-        transfer_mode: transferData.transferMode,
-        effective_date: transferData.effectiveDate,
-        recipient_bank: transferData.recipientBank
+        bank: sanitizedData.bank,
+        name: sanitizedData.name,
+        date: sanitizedData.date,
+        time: sanitizedData.time,
+        type: sanitizedData.type,
+        account: sanitizedData.account,
+        amount: sanitizedData.amount,
+        currency: sanitizedData.currency,
+        transaction_status: sanitizedData.transactionStatus,
+        starting_percentage: sanitizedData.startingPercentage,
+        transaction_id: sanitizedData.transactionId,
+        recipient_reference: sanitizedData.recipientReference,
+        pay_from_account: sanitizedData.payFromAccount,
+        transfer_mode: sanitizedData.transferMode,
+        effective_date: sanitizedData.effectiveDate,
+        recipient_bank: sanitizedData.recipientBank
       };
 
       const { data, error } = await supabase

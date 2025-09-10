@@ -8,7 +8,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Shield } from 'lucide-react';
+import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
+import { SecurityBadge } from '@/components/SecurityBadge';
+import { validatePassword, checkRateLimit } from '@/utils/security';
 
 const Auth = () => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -37,6 +40,17 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
+      // Rate limiting check
+      if (!checkRateLimit(formData.email)) {
+        toast({
+          title: "Too many attempts",
+          description: "Please wait 15 minutes before trying again.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       if (isSignIn) {
         const result = await login(formData.email, formData.password);
         if (result.success) {
@@ -64,10 +78,12 @@ const Auth = () => {
           return;
         }
 
-        if (formData.password.length < 6) {
+        // Enhanced password validation
+        const passwordValidation = validatePassword(formData.password);
+        if (!passwordValidation.isValid) {
           toast({
-            title: "Password too short",
-            description: "Password must be at least 6 characters long.",
+            title: "Password too weak",
+            description: passwordValidation.message,
             variant: "destructive",
           });
           setIsLoading(false);
@@ -133,11 +149,17 @@ const Auth = () => {
       
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground">
-            {isSignIn ? 'Welcome Back' : 'Create Account'}
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            {isSignIn ? 'Sign in to your account' : 'Sign up to get started'}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Shield className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold text-foreground">
+              {isSignIn ? 'Welcome Back' : 'Create Account'}
+            </h1>
+          </div>
+          <p className="text-muted-foreground">
+            {isSignIn ? 'Sign in to your secure account' : 'Create your secure account'}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            🔒 Your data is protected with enterprise-grade encryption
           </p>
         </div>
 
@@ -174,7 +196,8 @@ const Auth = () => {
                     type="text"
                     placeholder="Enter your full name"
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) => setFormData({...formData, name: e.target.value.trim()})}
+                    autoComplete="name"
                     required={!isSignIn}
                   />
                 </div>
@@ -182,14 +205,15 @@ const Auth = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  required
-                />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value.toLowerCase().trim()})}
+                    autoComplete="email"
+                    required
+                  />
               </div>
               
               <div className="space-y-2">
@@ -201,6 +225,7 @@ const Auth = () => {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    autoComplete={isSignIn ? "current-password" : "new-password"}
                     required
                   />
                   <Button
@@ -213,6 +238,13 @@ const Auth = () => {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
+                
+                {!isSignIn && formData.password && (
+                  <PasswordStrengthIndicator 
+                    password={formData.password} 
+                    className="mt-2"
+                  />
+                )}
               </div>
 
               {!isSignIn && (
@@ -224,6 +256,7 @@ const Auth = () => {
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                    autoComplete="new-password"
                     required={!isSignIn}
                   />
                 </div>
@@ -246,6 +279,10 @@ const Auth = () => {
                 )}
               </Button>
             </form>
+            
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <SecurityBadge showDetails className="justify-center" />
+            </div>
           </CardContent>
         </Card>
       </div>

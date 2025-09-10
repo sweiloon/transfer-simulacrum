@@ -62,16 +62,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      // Input sanitization and validation
+      const sanitizedEmail = email.toLowerCase().trim();
+      const sanitizedName = name.trim();
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(sanitizedEmail)) {
+        return { success: false, error: 'Please enter a valid email address' };
+      }
+      
+      // Name validation
+      if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+        return { success: false, error: 'Name must be between 2 and 50 characters' };
+      }
+      
       const redirectUrl = `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: sanitizedEmail,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            display_name: name,
-            name: name
+            display_name: sanitizedName,
+            name: sanitizedName
           }
         }
       });
@@ -96,8 +111,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      // Input sanitization
+      const sanitizedEmail = email.toLowerCase().trim();
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(sanitizedEmail)) {
+        return { success: false, error: 'Please enter a valid email address' };
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: sanitizedEmail,
         password
       });
 
