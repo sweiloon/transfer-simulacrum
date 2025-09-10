@@ -100,15 +100,15 @@ const MaybankTransfer = () => {
                 <div className="text-gray-600 text-sm">{transferData.account}</div>
                 <div className="text-black text-sm mt-1">{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="lg" className="text-gray-400 hover:text-gray-600 p-2">
-                <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-6 h-6" />
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12 -mt-1">
+                <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-7 h-7" />
               </Button>
             </div>
           </div>
           <div className="border-b-2 border-yellow-400"></div>
           
           {/* Transfer Details Section - now connected */}
-          <div className="p-6 bg-white">
+          <div className="p-6 bg-white rounded-b-lg">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-800 text-sm font-medium">Recipient's bank</span>
@@ -143,7 +143,7 @@ const MaybankTransfer = () => {
         </div>
 
         {/* Total Amount Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16 mt-6">
           <div className="px-6 py-4 flex items-center justify-between">
             <div className="text-gray-800 text-sm font-medium">Total Amount</div>
             <div className="text-red-600 text-sm">{transferData.currency} {transferData.amount}</div>
