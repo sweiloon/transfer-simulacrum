@@ -57,29 +57,13 @@ const MaybankTransfer = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header with Maybank branding */}
-      <div className="bg-gradient-to-r from-green-600 to-green-800">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="text-white text-2xl font-bold">Maybank2u</div>
-              <div className="text-white text-lg">MAE</div>
-            </div>
-            <nav className="hidden md:flex space-x-8 text-white text-sm">
-              <a href="#" className="hover:text-green-200">MY ACCOUNTS</a>
-              <a href="#" className="hover:text-green-200">INSURANCE</a>
-              <a href="#" className="hover:text-green-200 font-medium">PAY & TRANSFER</a>
-              <a href="#" className="hover:text-green-200">APPLY</a>
-              <a href="#" className="hover:text-green-200">CONTACT US</a>
-            </nav>
-          </div>
-          <div className="mt-4 text-white text-sm flex items-center">
-            <div className="w-4 h-4 border border-white rounded mr-2 flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded"></div>
-            </div>
-            Your last login was on Saturday, 29 March 2025 at 12:36:44
-          </div>
-        </div>
+      {/* Header with Maybank banner */}
+      <div className="relative">
+        <img 
+          src="/lovable-uploads/adc92189-3f59-49c5-a67d-990fcb08fee0.png" 
+          alt="Maybank2u Header"
+          className="w-full h-auto"
+        />
       </div>
 
       {/* Navigation Tabs */}
@@ -103,16 +87,18 @@ const MaybankTransfer = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/')}
-          className="mb-6 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Form
-        </Button>
+      <div className="max-w-4xl mx-auto px-4 py-8 relative">
+        {/* Back Button - moved to top right */}
+        <div className="absolute top-0 right-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Form
+          </Button>
+        </div>
 
         {/* Transfer From Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
