@@ -101,7 +101,7 @@ const MaybankTransfer = () => {
                 <div className="text-gray-600" style={{ fontSize: '13px' }}>{transferData.account}</div>
                 <div className="text-sm mt-1" style={{ color: '#474747' }}>{transferData.currency} {transferData.amount}</div>
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12" style={{ marginTop: '-17px' }}>
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 h-12 w-12" style={{ marginTop: '-22px', marginRight: '-8px' }}>
                 <img src="/lovable-uploads/ca336a31-0e33-4d87-9dbc-e6a991f00a42.png" alt="Edit" className="w-7 h-7" />
               </Button>
             </div>
@@ -149,7 +149,7 @@ const MaybankTransfer = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-16 mt-2">
           <div className="px-6 py-4 flex items-center justify-between">
             <div className="text-sm font-normal" style={{ color: '#474747' }}>Total Amount</div>
-            <div className="text-red-600 text-sm">{transferData.currency} {transferData.amount}</div>
+            <div className="text-sm" style={{ color: '#D9332D' }}>{transferData.currency} {transferData.amount}</div>
           </div>
         </div>
 
