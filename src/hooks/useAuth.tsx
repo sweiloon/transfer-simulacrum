@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
+import { checkVersionAndCleanup } from '@/utils/version';
 
 interface AuthUser {
   id: string;
@@ -30,10 +31,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
     
-    // Set up auth state listener FIRST
+    // Check for version changes and perform cleanup if needed
+    const wasCleanupPerformed = checkVersionAndCleanup();
+    if (wasCleanupPerformed) {
+      console.log('🔄 Code update detected - forcing logout and clearing auth state');
+      // Force immediate logout after cleanup
+      supabase.auth.signOut().catch(() => {
+        // Ignore errors during forced logout
+        console.log('Forced logout during version cleanup');
+      });
+    }
+    
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email || 'No session');
+        // Log auth state changes in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔐 Auth state change:', {
+            event,
+            hasUser: !!session?.user,
+            userEmail: session?.user?.email || 'No session',
+            isLoading
+          });
+        }
         
         if (!isMounted) return;
         
@@ -41,11 +61,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (session?.user) {
           try {
-            const { data: profile } = await supabase
+            // Add timeout for profile fetch
+            const profilePromise = supabase
               .from('profiles')
               .select('display_name')
               .eq('user_id', session.user.id)
               .single();
+
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+            );
+
+            const { data: profile } = await Promise.race([profilePromise, timeoutPromise]) as any;
 
             if (isMounted) {
               setUser({
@@ -55,7 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               });
             }
           } catch (error) {
-            // Fallback if profile doesn't exist
+            // Fallback if profile doesn't exist or timeout
             if (isMounted) {
               setUser({
                 id: session.user.id,
@@ -70,17 +97,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
         
+        // Always set loading to false after processing
         if (isMounted) {
           setIsLoading(false);
         }
       }
     );
 
-    // THEN check for existing session to restore state immediately
+    // Initialize authentication
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('Initial session check:', session?.user?.email || 'No session');
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Initial session check:', session?.user?.email || 'No session');
+        }
         
         if (!isMounted) return;
         
@@ -90,17 +121,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
 
-        if (session) {
-          setSession(session);
-          if (session.user) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              name: session.user.email || ''
-            });
-          }
+        // The auth state change handler will process the session
+        if (!session && isMounted) {
+          setIsLoading(false);
         }
-        setIsLoading(false);
       } catch (error) {
         console.error('Auth initialization error:', error);
         if (isMounted) {
@@ -109,17 +133,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
+    // Set timeout fallback for initialization
+    const initializationTimeout = setTimeout(() => {
+      if (isMounted) {
+        console.warn('Auth initialization timeout, setting loading to false');
+        setIsLoading(false);
+      }
+    }, 5000);
+
     initializeAuth();
 
     return () => {
       isMounted = false;
+      clearTimeout(initializationTimeout);
       subscription.unsubscribe();
     };
   }, []);
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      setIsLoading(true);
+      // Don't set global loading state here as it interferes with auth flow
       
       // Input sanitization and validation
       const sanitizedEmail = email.toLowerCase().trim();
@@ -128,13 +161,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(sanitizedEmail)) {
-        setIsLoading(false);
         return { success: false, error: 'Please enter a valid email address' };
       }
       
       // Name validation
       if (sanitizedName.length < 2 || sanitizedName.length > 50) {
-        setIsLoading(false);
         return { success: false, error: 'Name must be between 2 and 50 characters' };
       }
       
@@ -160,23 +191,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { data, error } = await Promise.race([registrationPromise, timeoutPromise]) as any;
 
       if (error) {
-        setIsLoading(false);
         return { success: false, error: error.message };
       }
 
       // Check if email confirmation is required
       if (data.user && !data.session) {
-        setIsLoading(false);
         return { 
           success: true, 
           error: 'Please check your email and click the confirmation link to activate your account.' 
         };
       }
 
-      setIsLoading(false);
       return { success: true };
     } catch (error) {
-      setIsLoading(false);
       console.error('Registration error:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Registration failed' };
     }
@@ -184,7 +211,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      setIsLoading(true);
+      // Don't set global loading state here as it interferes with auth flow
       
       // Input sanitization
       const sanitizedEmail = email.toLowerCase().trim();
@@ -192,7 +219,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(sanitizedEmail)) {
-        setIsLoading(false);
         return { success: false, error: 'Please enter a valid email address' };
       }
       
@@ -209,7 +235,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { data, error } = await Promise.race([loginPromise, timeoutPromise]) as any;
 
       if (error) {
-        setIsLoading(false);
         // Provide more specific error messages
         if (error.message.includes('email_not_confirmed')) {
           return { 
@@ -226,10 +251,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: false, error: error.message };
       }
 
-      // Don't manually set loading to false here - let the auth state change handle it
       return { success: true };
     } catch (error) {
-      setIsLoading(false);
       console.error('Login error:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Login failed' };
     }
@@ -237,6 +260,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
+      // Clear local auth state immediately for responsive UI
+      setUser(null);
+      setSession(null);
+      
+      // Clear any cached transfer data
+      const keysToRemove = ['transferData', 'ctosData', 'editTransferData'];
+      keysToRemove.forEach(key => {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn(`Could not remove ${key} from localStorage:`, e);
+        }
+      });
+      
+      // Attempt to sign out from Supabase
       const result = await Promise.race([
         supabase.auth.signOut(),
         new Promise((_, reject) => 
@@ -246,15 +284,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (result?.error) {
         console.error('Logout error:', result.error);
-        // Force clear local state even if Supabase call fails
-        setUser(null);
-        setSession(null);
       }
     } catch (error) {
       console.error('Error during logout:', error);
-      // Force clear local state on any error including timeout
-      setUser(null);
-      setSession(null);
+      // State is already cleared above, so just log the error
     }
   };
 
