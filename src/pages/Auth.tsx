@@ -22,23 +22,17 @@ const Auth = () => {
     name: '',
     confirmPassword: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFormLoading, setIsFormLoading] = useState(false);
   
-  const { login, register, user } = useAuth();
+  const { login, register, user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Redirect if already logged in
-  useEffect(() => {
-    if (!isLoading && user) {
-      console.log('Auth page: User is logged in, redirecting to home');
-      navigate('/', { replace: true });
-    }
-  }, [user, navigate, isLoading]);
+  // Note: Redirect handling is now done by AuthGuard component
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsFormLoading(true);
 
     try {
       // Rate limiting check
@@ -48,7 +42,7 @@ const Auth = () => {
           description: "Please wait 15 minutes before trying again.",
           variant: "destructive",
         });
-        setIsLoading(false);
+        setIsFormLoading(false);
         return;
       }
 
@@ -59,7 +53,7 @@ const Auth = () => {
             title: "Welcome back!",
             description: "You have been successfully logged in.",
           });
-          navigate('/', { replace: true });
+          // AuthGuard will handle the redirect automatically
         } else {
           toast({
             title: "Login failed",
@@ -75,7 +69,7 @@ const Auth = () => {
             description: "Passwords do not match.",
             variant: "destructive",
           });
-          setIsLoading(false);
+          setIsFormLoading(false);
           return;
         }
 
@@ -87,7 +81,7 @@ const Auth = () => {
             description: passwordValidation.message,
             variant: "destructive",
           });
-          setIsLoading(false);
+          setIsFormLoading(false);
           return;
         }
 
@@ -108,7 +102,7 @@ const Auth = () => {
               title: "Account created!",
               description: "Your account has been created successfully.",
             });
-            navigate('/', { replace: true });
+            // AuthGuard will handle the redirect automatically
           }
         } else {
           toast({
@@ -125,7 +119,7 @@ const Auth = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsFormLoading(false);
     }
   };
 
@@ -266,9 +260,9 @@ const Auth = () => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!isFormValid() || isLoading}
+                disabled={!isFormValid() || isFormLoading}
               >
-                {isLoading ? (
+                {isFormLoading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     {isSignIn ? "Signing in..." : "Creating account..."}

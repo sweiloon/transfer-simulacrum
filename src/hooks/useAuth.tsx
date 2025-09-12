@@ -79,7 +79,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
             );
 
-            const { data: profile } = await Promise.race([profilePromise, timeoutPromise]) as any;
+            const { data: profile, error: profileError } = await Promise.race([profilePromise, timeoutPromise]) as any;
+
+            // Only log profile errors in development, not in console for production
+            if (profileError && process.env.NODE_ENV === 'development') {
+              console.log('Profile fetch info:', profileError.message);
+            }
 
             if (isMounted) {
               setUser({
@@ -89,7 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               });
             }
           } catch (error) {
-            // Fallback if profile doesn't exist or timeout
+            // Fallback if profile doesn't exist or timeout - don't log errors
             if (isMounted) {
               setUser({
                 id: session.user.id,
@@ -123,7 +128,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (!isMounted) return;
         
         if (error) {
-          console.error('Session check error:', error);
+          // Only log errors in development
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Session check error:', error);
+          }
           setIsLoading(false);
           return;
         }
@@ -133,7 +141,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setIsLoading(false);
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        // Only log errors in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Auth initialization error:', error);
+        }
         if (isMounted) {
           setIsLoading(false);
         }
@@ -239,7 +250,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setTimeout(() => reject(new Error('Login timeout')), 30000)
       );
 
-      const { data, error } = await Promise.race([loginPromise, timeoutPromise]) as any;
+      const { error } = await Promise.race([loginPromise, timeoutPromise]) as any;
 
       if (error) {
         // Provide more specific error messages
@@ -277,7 +288,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
           localStorage.removeItem(key);
         } catch (e) {
-          console.warn(`Could not remove ${key} from localStorage:`, e);
+          // Only log localStorage errors in development
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`Could not remove ${key} from localStorage:`, e);
+          }
         }
       });
       
@@ -289,11 +303,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         )
       ]) as any;
       
-      if (result?.error) {
+      if (result?.error && process.env.NODE_ENV === 'development') {
         console.error('Logout error:', result.error);
       }
     } catch (error) {
-      console.error('Error during logout:', error);
+      // Only log logout errors in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error during logout:', error);
+      }
       // State is already cleared above, so just log the error
     }
   };

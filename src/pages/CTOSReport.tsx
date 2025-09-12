@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { safeLocalStorage } from '@/utils/storage';
 
 interface CTOSData {
   name: string;
@@ -17,14 +18,13 @@ const CTOSReport = () => {
 
   useEffect(() => {
     // Get CTOS data from localStorage
-    const data = localStorage.getItem('ctosData');
+    const data = safeLocalStorage.getJSON<CTOSData>('ctosData');
     if (!data) {
       navigate('/');
       return;
     }
     
-    const parsedData = JSON.parse(data);
-    setCTOSData(parsedData);
+    setCTOSData(data);
   }, [navigate]);
 
   useEffect(() => {
