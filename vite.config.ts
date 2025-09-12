@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  // Copy public assets including _redirects for hosting platforms
+  publicDir: 'public',
   plugins: [
     react(),
     mode === 'development' &&
