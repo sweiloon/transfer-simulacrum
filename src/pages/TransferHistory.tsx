@@ -7,6 +7,8 @@ import { ArrowLeft, Calendar, Clock, CreditCard, Trash2, Building2, Eye } from '
 import { format } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
+import { safeLocalStorage } from '@/utils/storage';
+import { formatCurrency } from '@/utils/currency';
 
 const TransferHistory = () => {
   const { transfers, deleteTransfer, isLoading: transfersLoading } = useTransferHistory();
@@ -47,7 +49,7 @@ const TransferHistory = () => {
       effectiveDate: transfer.effective_date,
       recipientBank: transfer.recipient_bank
     };
-    localStorage.setItem('editTransferData', JSON.stringify(mappedTransfer));
+    safeLocalStorage.setJSON('editTransferData', mappedTransfer);
     navigate('/');
   };
 
@@ -63,8 +65,8 @@ const TransferHistory = () => {
   };
 
   const formatAmount = (amount: string, currency: string) => {
-    const numAmount = parseFloat(amount);
-    return `${currency} ${numAmount.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    // Use our new currency formatting utility
+    return formatCurrency(amount);
   };
 
   // Show loading spinner

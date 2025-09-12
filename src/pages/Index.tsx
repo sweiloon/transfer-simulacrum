@@ -13,6 +13,9 @@ import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTransferHistory } from '@/hooks/useTransferHistory';
+import { safeLocalStorage } from '@/utils/storage';
+import { validateTransferAmount, validateAccountNumber, validateRecipientName, validateReference, sanitizeTransferData } from '@/utils/sanitization';
+import { formatCurrencyInput, parseCurrency } from '@/utils/currency';
 
 interface TransferData {
   bank: string;
@@ -100,6 +103,9 @@ const Index = () => {
     effectiveDate: new Date(),
     recipientBank: ''
   });
+
+  // State for formatted amount display
+  const [displayAmount, setDisplayAmount] = useState('');
   
   const [ctosData, setCTOSData] = useState<CTOSData>({
     name: '',
@@ -111,39 +117,48 @@ const Index = () => {
     score: ''
   });
 
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!isLoading && !user) {
-      console.log('Index page: User not logged in, redirecting to auth');
-      navigate('/auth', { replace: true });
-    }
-  }, [user, navigate, isLoading]);
-
   // Load transfer data if editing from history
   useEffect(() => {
-    const editData = localStorage.getItem('editTransferData');
+    const editData = safeLocalStorage.getJSON<any>('editTransferData');
     if (editData) {
       try {
-        const parsedData = JSON.parse(editData);
-        setTransferData({
-          ...parsedData,
-          date: new Date(parsedData.date),
-          effectiveDate: new Date(parsedData.effective_date || parsedData.effectiveDate),
-          transactionStatus: parsedData.transaction_status || parsedData.transactionStatus,
-          startingPercentage: parsedData.starting_percentage || parsedData.startingPercentage,
-          transactionId: parsedData.transaction_id || parsedData.transactionId,
-          recipientReference: parsedData.recipient_reference || parsedData.recipientReference,
-          payFromAccount: parsedData.pay_from_account || parsedData.payFromAccount,
-          transferMode: parsedData.transfer_mode || parsedData.transferMode,
-          recipientBank: parsedData.recipient_bank || parsedData.recipientBank
-        });
+        const updatedData = {
+          ...editData,
+          date: new Date(editData.date),
+          effectiveDate: new Date(editData.effective_date || editData.effectiveDate),
+          transactionStatus: editData.transaction_status || editData.transactionStatus,
+          startingPercentage: editData.starting_percentage || editData.startingPercentage,
+          transactionId: editData.transaction_id || editData.transactionId,
+          recipientReference: editData.recipient_reference || editData.recipientReference,
+          payFromAccount: editData.pay_from_account || editData.payFromAccount,
+          transferMode: editData.transfer_mode || editData.transferMode,
+          recipientBank: editData.recipient_bank || editData.recipientBank
+        };
+        setTransferData(updatedData);
+        
+        // Format the amount for display
+        if (updatedData.amount) {
+          setDisplayAmount(formatCurrencyInput(`RM${updatedData.amount}`));
+        }
+        
         // Clear the edit data after loading
-        localStorage.removeItem('editTransferData');
+        safeLocalStorage.removeItem('editTransferData');
       } catch (error) {
         console.error('Error loading edit transfer data:', error);
       }
     }
   }, []);
+
+  // Handle amount input changes with currency formatting
+  const handleAmountChange = (value: string) => {
+    // Format the input for display
+    const formattedDisplay = formatCurrencyInput(value);
+    setDisplayAmount(formattedDisplay);
+    
+    // Extract numerical value for internal storage
+    const numericValue = parseCurrency(formattedDisplay);
+    setTransferData({...transferData, amount: numericValue.toString()});
+  };
 
   const handleGenerate = async () => {
     if (!user) {
@@ -155,15 +170,53 @@ const Index = () => {
     
     try {
       if (activeForm === 'transfer') {
+        // Validate transfer form data
+        const amountValidation = validateTransferAmount(transferData.amount);
+        if (!amountValidation.isValid) {
+          alert(amountValidation.message);
+          setIsGenerating(false);
+          return;
+        }
+
+        const accountValidation = validateAccountNumber(transferData.account);
+        if (!accountValidation.isValid) {
+          alert(accountValidation.message);
+          setIsGenerating(false);
+          return;
+        }
+
+        const nameValidation = validateRecipientName(transferData.name);
+        if (!nameValidation.isValid) {
+          alert(nameValidation.message);
+          setIsGenerating(false);
+          return;
+        }
+
+        const refValidation = validateReference(transferData.recipientReference);
+        if (!refValidation.isValid) {
+          alert(refValidation.message);
+          setIsGenerating(false);
+          return;
+        }
+
+        if (!transferData.bank) {
+          alert('Please select a bank');
+          setIsGenerating(false);
+          return;
+        }
+
+        // Sanitize data before storing and sending
+        const sanitizedTransferData = sanitizeTransferData(transferData);
+
         try {
           // Save transfer to history
-          await addTransfer(transferData);
+          await addTransfer(sanitizedTransferData);
           
           // Store transfer data in localStorage to access on loading page
-          localStorage.setItem('transferData', JSON.stringify(transferData));
+          safeLocalStorage.setJSON('transferData', sanitizedTransferData);
           
           // Navigate to Maybank-specific page if Maybank is selected
-          if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+          if (sanitizedTransferData.bank === 'Malayan Banking Berhad (Maybank)') {
             navigate('/maybank-transfer');
           } else {
             navigate('/transfer-loading');
@@ -171,30 +224,58 @@ const Index = () => {
         } catch (error) {
           console.error('Error saving transfer:', error);
           // Still navigate even if saving fails
-          localStorage.setItem('transferData', JSON.stringify(transferData));
+          safeLocalStorage.setJSON('transferData', sanitizedTransferData);
           
-          if (transferData.bank === 'Malayan Banking Berhad (Maybank)') {
+          if (sanitizedTransferData.bank === 'Malayan Banking Berhad (Maybank)') {
             navigate('/maybank-transfer');
           } else {
             navigate('/transfer-loading');
           }
         }
       } else {
+        // Validate CTOS form data
+        if (!ctosData.name.trim()) {
+          alert('Please enter a name');
+          setIsGenerating(false);
+          return;
+        }
+
+        if (!ctosData.newId.trim()) {
+          alert('Please enter a new IC number');
+          setIsGenerating(false);
+          return;
+        }
+
+        // Sanitize CTOS data
+        const sanitizedCTOSData = sanitizeTransferData(ctosData);
+        
         // Store CTOS data in localStorage to access on report page
-        localStorage.setItem('ctosData', JSON.stringify(ctosData));
+        safeLocalStorage.setJSON('ctosData', sanitizedCTOSData);
         navigate('/ctos-report');
       }
     } catch (error) {
       console.error('Error generating:', error);
+      alert('An error occurred. Please try again.');
     } finally {
       setIsGenerating(false);
     }
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent double clicks
+    
     setIsLoggingOut(true);
     try {
+      // Clear sensitive data from localStorage
+      safeLocalStorage.removeItem('transferData');
+      safeLocalStorage.removeItem('ctosData');
+      safeLocalStorage.removeItem('editTransferData');
+      
       await logout();
+      navigate('/auth', { replace: true });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Force navigation even if logout fails
       navigate('/auth', { replace: true });
     } finally {
       setIsLoggingOut(false);
@@ -514,24 +595,13 @@ const Index = () => {
                   <Label htmlFor="amount" className="text-sm font-medium text-foreground">
                     Transfer Amount <span className="text-destructive">*</span>
                   </Label>
-                  <div className="flex gap-3">
-                    <Select value={transferData.currency} onValueChange={(value) => setTransferData({...transferData, currency: value})}>
-                      <SelectTrigger className="w-24 h-12">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="RM">RM</SelectItem>
-                        <SelectItem value="$">$</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      id="amount"
-                      value={transferData.amount}
-                      onChange={(e) => setTransferData({...transferData, amount: e.target.value.replace(/[^\d.]/g, '')})}
-                      placeholder="0.00"
-                      className="flex-1 h-12"
-                    />
-                  </div>
+                  <Input
+                    id="amount"
+                    value={displayAmount}
+                    onChange={(e) => handleAmountChange(e.target.value)}
+                    placeholder="RM0.00"
+                    className="h-12"
+                  />
                 </div>
 
                 {/* Recipient Reference */}

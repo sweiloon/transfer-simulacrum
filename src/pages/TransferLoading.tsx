@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { safeLocalStorage } from '@/utils/storage';
+import { formatCurrency } from '@/utils/currency';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -108,13 +110,13 @@ const TransferLoading = () => {
 
   useEffect(() => {
     // Get transfer data from localStorage
-    const data = localStorage.getItem('transferData');
+    const data = safeLocalStorage.getJSON<TransferData>('transferData');
     if (!data) {
       navigate('/');
       return;
     }
     
-    const parsedData = JSON.parse(data);
+    const parsedData = { ...data };
     parsedData.date = new Date(parsedData.date);
     setTransferData(parsedData);
 
@@ -382,10 +384,7 @@ const TransferLoading = () => {
                   <div className={`bg-gradient-to-r ${style.primary} p-3 sm:p-4 lg:p-6 rounded-lg text-white`}>
                     <label className="text-xs sm:text-sm font-medium text-white/80">Transfer Amount</label>
                     <p className="font-bold text-xl sm:text-2xl lg:text-3xl xl:text-4xl mt-1 break-words">
-                      {transferData.currency} {parseFloat(transferData.amount).toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
+                      {formatCurrency(transferData.amount)}
                     </p>
                   </div>
 
