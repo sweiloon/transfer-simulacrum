@@ -15,44 +15,54 @@ const VERSION_KEY = 'app_version';
  * If not, it means the code was updated and we should clear stale data
  */
 export const checkVersionAndCleanup = (): boolean => {
+  // Skip version check in development to avoid constant clearing
+  if (process.env.NODE_ENV === 'development') {
+    return false;
+  }
+
   try {
     const storedVersion = localStorage.getItem(VERSION_KEY);
     const currentVersion = APP_VERSION;
     
     console.log('Version check:', { storedVersion, currentVersion });
     
-    // If no stored version or version mismatch, cleanup is needed
-    if (!storedVersion || storedVersion !== currentVersion) {
+    // If no stored version, just set it without cleanup (first visit)
+    if (!storedVersion) {
+      localStorage.setItem(VERSION_KEY, currentVersion);
+      return false;
+    }
+    
+    // Only perform cleanup if versions don't match
+    if (storedVersion !== currentVersion) {
       console.log('Version mismatch detected, performing cleanup...');
       
-      // Clear all localStorage data that might be stale
-      const keysToKeep = ['theme-preference']; // Keep user preferences
-      const allKeys = Object.keys(localStorage);
+      // Selective cleanup - only remove potentially problematic keys
+      const keysToRemove = [
+        'transferData',
+        'ctosData', 
+        'editTransferData',
+        // Supabase auth keys that might be stale
+        'supabase.auth.token',
+        'sb-localhost-auth-token',
+        'sb-auth-token'
+      ];
       
-      allKeys.forEach(key => {
-        if (!keysToKeep.includes(key)) {
+      const allKeys = Object.keys(localStorage);
+      const supabaseKeys = allKeys.filter(key => 
+        key.startsWith('sb-') && key.includes('auth')
+      );
+      
+      // Remove specific keys instead of clearing everything
+      [...keysToRemove, ...supabaseKeys].forEach(key => {
+        try {
           localStorage.removeItem(key);
+        } catch (e) {
+          console.warn(`Could not remove ${key}:`, e);
         }
       });
       
       // Set the new version
       localStorage.setItem(VERSION_KEY, currentVersion);
-      
-      // Force clear any potential auth state
-      if (typeof window !== 'undefined' && window.indexedDB) {
-        // Clear any potential Supabase cached data
-        try {
-          // Clear Supabase storage keys
-          const supabaseKeys = allKeys.filter(key => 
-            key.includes('supabase') || 
-            key.includes('auth') ||
-            key.includes('sb-')
-          );
-          supabaseKeys.forEach(key => localStorage.removeItem(key));
-        } catch (error) {
-          console.warn('Could not clear Supabase storage:', error);
-        }
-      }
       
       return true; // Cleanup was performed
     }
@@ -60,14 +70,14 @@ export const checkVersionAndCleanup = (): boolean => {
     return false; // No cleanup needed
   } catch (error) {
     console.error('Version check failed:', error);
-    // On error, assume cleanup is needed for safety
+    // On error, don't perform aggressive cleanup
+    // Just set current version and continue
     try {
-      localStorage.clear();
       localStorage.setItem(VERSION_KEY, APP_VERSION);
     } catch (clearError) {
-      console.error('Failed to clear storage:', clearError);
+      console.error('Failed to set version:', clearError);
     }
-    return true;
+    return false;
   }
 };
 

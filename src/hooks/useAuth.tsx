@@ -30,16 +30,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true;
+    let hasPerformedVersionCheck = false;
     
-    // Check for version changes and perform cleanup if needed
-    const wasCleanupPerformed = checkVersionAndCleanup();
-    if (wasCleanupPerformed) {
-      console.log('🔄 Code update detected - forcing logout and clearing auth state');
-      // Force immediate logout after cleanup
-      supabase.auth.signOut().catch(() => {
-        // Ignore errors during forced logout
-        console.log('Forced logout during version cleanup');
-      });
+    // Perform version check only once per session
+    if (!hasPerformedVersionCheck) {
+      hasPerformedVersionCheck = true;
+      const wasCleanupPerformed = checkVersionAndCleanup();
+      if (wasCleanupPerformed) {
+        console.log('🔄 Code update detected - clearing auth state');
+        // Only clear local state, don't force signOut which might cause issues
+        setUser(null);
+        setSession(null);
+        
+        // Attempt graceful logout but don't block if it fails
+        supabase.auth.signOut().catch((error) => {
+          console.warn('Logout during version cleanup failed:', error);
+        });
+      }
     }
     
     // Set up auth state listener
