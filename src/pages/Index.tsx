@@ -47,16 +47,63 @@ interface CTOSData {
 }
 
 const banks = [
-  'Malayan Banking Berhad (Maybank)',
-  'CIMB Bank Berhad',
-  'Public Bank Berhad',
-  'RHB Bank Berhad',
-  'Hong Leong Bank Berhad',
+  'AEON Bank (M) Berhad',
+  'Agrobank',
+  'Affin Bank Berhad',
+  'Al-Rajhi Banking & Investment Corporation (Malaysia) Berhad',
+  'Alliance Bank Malaysia Berhad',
   'AmBank (M) Berhad',
+  'Axiata Digital Ecode Sdn Bhd - Boost (Non-Bank)',
+  'Bangkok Bank Berhad',
   'Bank Islam Malaysia Berhad',
-  'Bank Kerjasama Rakyat Malaysia Berhad (Bank Rakyat)',
-  'United Overseas Bank (Malaysia) Bhd (UOB Malaysia)',
-  'OCBC Bank (Malaysia) Berhad'
+  'Bank Kerjasama Rakyat Malaysia Berhad',
+  'Bank Muamalat Malaysia Bhd',
+  'Bank Simpanan Nasional Berhad',
+  'Bank of America (M) Berhad',
+  'Bank of China (M) Berhad',
+  'Beez Fintech Sdn Bhd (Non-Bank)',
+  'BigPay Malaysia Sdn Bhd (Non-Bank)',
+  'BNP Paribas Malaysia Berhad',
+  'Boost Bank Berhad',
+  'CCBM CHINA CONSTRUCTION BANK',
+  'China Construction Bank (Malaysia) Berhad',
+  'CIMB Bank Berhad',
+  'Citibank Berhad',
+  'Co-opbank Pertama',
+  'Deutsche Bank (Malaysia) Berhad',
+  'Fass Payment Solutions Sdn Bhd (Non-Bank)',
+  'Fave Asia Technologies Snd Bhd (Non-Bank)',
+  'Finexus Cards Sdn Bhd (Non-Bank)',
+  'GHL Cardpay Sdn Bhd (Non-Bank)',
+  'Gpay Network (M) Sdn Bhd - Grab (Non-Bank)',
+  'GX BANK BERHAD',
+  'Hong Leong Bank Berhad',
+  'HSBC Bank Malaysia Berhad',
+  'Industrial and Commercial Bank of China (M) Berhad',
+  'IPAY88 (M) Sdn Bhd (Non-Bank)',
+  'JP Morgan Chase Bank Berhad',
+  'KAF Digital Bank Berhad',
+  'Kuwait Finance House',
+  'Maybank Berhad',
+  'MBSB Bank Berhad',
+  'Merchanttrade Asia Sdn Bhd (Non-Bank)',
+  'Mizuho Bank (Malaysia) Berhad',
+  'MobilityOne Sdn Bhd (Non-Bank)',
+  'MUFG Bank (Malaysia) Berhad',
+  'OCBC Bank Berhad',
+  'Payex PLT (Non-Bank)',
+  'Public Bank Berhad',
+  'Razer Merchant Services Sdn Bhd (Non-Bank)',
+  'Revenue Solution Sdn Bhd (Non-Bank)',
+  'RHB Bank Berhad',
+  'Ryt Bank',
+  'Setel Pay Sdn Bhd (Non-Bank)',
+  'ShopeePay (Non-Bank)',
+  'SiliconNet Technologies Sdn Bhd (Non-Bank)',
+  'Standard Chartered Bank Malaysia Berhad',
+  'Sumitomo Mitsui Banking Corporation (M) Berhad',
+  'TNG Digital - Touch\'n GO (Non-Bank)',
+  'United Oversea Bank(Malaysia)Bhd'
 ];
 
 const transferTypes = [
@@ -216,7 +263,7 @@ const Index = () => {
           safeLocalStorage.setJSON('transferData', sanitizedTransferData);
           
           // Navigate to Maybank-specific page if Maybank is selected
-          if (sanitizedTransferData.bank === 'Malayan Banking Berhad (Maybank)') {
+          if (sanitizedTransferData.bank === 'Maybank Berhad') {
             navigate('/maybank-transfer');
           } else {
             navigate('/transfer-loading');
@@ -226,7 +273,7 @@ const Index = () => {
           // Still navigate even if saving fails
           safeLocalStorage.setJSON('transferData', sanitizedTransferData);
           
-          if (sanitizedTransferData.bank === 'Malayan Banking Berhad (Maybank)') {
+          if (sanitizedTransferData.bank === 'Maybank Berhad') {
             navigate('/maybank-transfer');
           } else {
             navigate('/transfer-loading');
@@ -435,7 +482,7 @@ const Index = () => {
                 </div>
 
                 {/* Transaction ID - Hidden for Maybank */}
-                {transferData.bank !== 'Malayan Banking Berhad (Maybank)' && (
+                {transferData.bank !== 'Maybank Berhad' && (
                   <div className="space-y-2">
                     <Label htmlFor="transactionId" className="text-sm font-medium text-foreground">
                       Transaction ID
@@ -525,7 +572,7 @@ const Index = () => {
                       <SelectValue placeholder="Select transaction status" />
                     </SelectTrigger>
                     <SelectContent>
-                      {transferData.bank === 'Malayan Banking Berhad (Maybank)' ? (
+                      {transferData.bank === 'Maybank Berhad' ? (
                         <SelectItem value="Processing" className="py-3">Processing</SelectItem>
                       ) : (
                         <>

@@ -30,7 +30,7 @@ interface TransferData {
 }
 
 const bankStyles = {
-  'Malayan Banking Berhad (Maybank)': {
+  'Maybank Berhad': {
     primary: 'from-yellow-400 to-yellow-500',
     bg: 'bg-yellow-50',
     text: 'text-yellow-800',
@@ -260,7 +260,7 @@ const TransferLoading = () => {
 
   if (!transferData) return null;
 
-  const style = bankStyles[transferData.bank as keyof typeof bankStyles] || bankStyles['Malayan Banking Berhad (Maybank)'];
+  const style = bankStyles[transferData.bank as keyof typeof bankStyles] || bankStyles['Maybank Berhad'];
 
   return (
     <>
