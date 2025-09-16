@@ -77,6 +77,7 @@ export type Database = {
           id: string
           name: string
           pay_from_account: string | null
+          processing_reason: string | null
           recipient_bank: string | null
           recipient_reference: string | null
           starting_percentage: string | null
@@ -99,6 +100,7 @@ export type Database = {
           id?: string
           name: string
           pay_from_account?: string | null
+          processing_reason?: string | null
           recipient_bank?: string | null
           recipient_reference?: string | null
           starting_percentage?: string | null
@@ -121,6 +123,7 @@ export type Database = {
           id?: string
           name?: string
           pay_from_account?: string | null
+          processing_reason?: string | null
           recipient_bank?: string | null
           recipient_reference?: string | null
           starting_percentage?: string | null

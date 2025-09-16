@@ -27,6 +27,7 @@ interface TransferData {
   currency: string;
   transactionStatus: string;
   startingPercentage: string;
+  processingReason: string;
 }
 
 const bankStyles = {
@@ -231,6 +232,12 @@ const TransferLoading = () => {
               <span>✓ Confirming transaction</span>
               <span>Complete</span>
             </div>
+            {transferData && transferData.processingReason && transferData.bank !== 'Maybank Berhad' && (
+              <div className="mt-2 p-2 bg-gray-50 rounded border">
+                <div className="text-xs text-gray-600 mb-1">Processing Reason:</div>
+                <div className="text-sm font-medium">{transferData.processingReason}</div>
+              </div>
+            )}
           </div>
         );
       case 'Processing':
@@ -253,6 +260,12 @@ const TransferLoading = () => {
                 {progress > 80 ? 'Complete' : 'In Progress'}
               </span>
             </div>
+            {transferData && transferData.processingReason && transferData.bank !== 'Maybank Berhad' && (
+              <div className="mt-2 p-2 bg-gray-50 rounded border">
+                <div className="text-xs text-gray-600 mb-1">Processing Reason:</div>
+                <div className="text-sm font-medium">{transferData.processingReason}</div>
+              </div>
+            )}
           </div>
         );
     }

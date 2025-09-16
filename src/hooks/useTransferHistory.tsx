@@ -22,6 +22,7 @@ export interface TransferHistoryItem {
   transfer_mode: string;
   effective_date: Date;
   recipient_bank: string;
+  processing_reason: string;
   created_at: Date;
 }
 
@@ -65,7 +66,8 @@ export const useTransferHistory = () => {
           ...transfer,
           date: new Date(transfer.date),
           effective_date: new Date(transfer.effective_date),
-          created_at: new Date(transfer.created_at)
+          created_at: new Date(transfer.created_at),
+          processing_reason: transfer.processing_reason || ''
         }));
         setTransfers(formattedTransfers);
       }
@@ -107,7 +109,8 @@ export const useTransferHistory = () => {
         pay_from_account: sanitizedData.payFromAccount,
         transfer_mode: sanitizedData.transferMode,
         effective_date: sanitizedData.effectiveDate,
-        recipient_bank: sanitizedData.recipientBank
+        recipient_bank: sanitizedData.recipientBank,
+        processing_reason: sanitizedData.processingReason || ''
       };
 
       const { data, error } = await supabase
@@ -126,7 +129,8 @@ export const useTransferHistory = () => {
           ...data,
           date: new Date(data.date),
           effective_date: new Date(data.effective_date),
-          created_at: new Date(data.created_at)
+          created_at: new Date(data.created_at),
+          processing_reason: data.processing_reason || ''
         };
         setTransfers(prev => [formattedTransfer, ...prev]);
         return data.id;

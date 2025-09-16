@@ -34,6 +34,7 @@ interface TransferData {
   transferMode: string;
   effectiveDate: Date;
   recipientBank: string;
+  processingReason: string;
 }
 
 interface CTOSData {
@@ -148,7 +149,8 @@ const Index = () => {
     payFromAccount: 'Savings Account-i',
     transferMode: 'Funds Transfer',
     effectiveDate: new Date(),
-    recipientBank: ''
+    recipientBank: '',
+    processingReason: ''
   });
 
   // State for formatted amount display
@@ -179,7 +181,8 @@ const Index = () => {
           recipientReference: editData.recipient_reference || editData.recipientReference,
           payFromAccount: editData.pay_from_account || editData.payFromAccount,
           transferMode: editData.transfer_mode || editData.transferMode,
-          recipientBank: editData.recipient_bank || editData.recipientBank
+          recipientBank: editData.recipient_bank || editData.recipientBank,
+          processingReason: editData.processing_reason || editData.processingReason || ''
         };
         setTransferData(updatedData);
         
@@ -664,6 +667,22 @@ const Index = () => {
                     className="h-12"
                   />
                 </div>
+
+                {/* Processing Reason - Hidden for Maybank */}
+                {transferData.bank !== 'Maybank Berhad' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="processingReason" className="text-sm font-medium text-foreground">
+                      Processing Reason
+                    </Label>
+                    <Input
+                      id="processingReason"
+                      value={transferData.processingReason}
+                      onChange={(e) => setTransferData({...transferData, processingReason: e.target.value})}
+                      placeholder="Enter processing reason"
+                      className="h-12"
+                    />
+                  </div>
+                )}
 
                 {/* Pay From Account */}
                 <div className="space-y-2">
