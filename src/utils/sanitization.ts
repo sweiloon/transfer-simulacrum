@@ -107,13 +107,19 @@ export const validateRecipientName = (name: string): { isValid: boolean; message
   return { isValid: true };
 };
 
-export const validateReference = (reference: string): { isValid: boolean; message?: string } => {
+export const validateReference = (
+  reference?: string | null
+): { isValid: boolean; message?: string } => {
+  if (reference === undefined || reference === null) {
+    return { isValid: true };
+  }
+
   const cleanRef = reference.trim();
-  
+
   if (cleanRef.length > 50) {
     return { isValid: false, message: 'Reference must be less than 50 characters' };
   }
-  
+
   // Allow alphanumeric, spaces, and common symbols
   if (cleanRef && !/^[a-zA-Z0-9\s\-_.,()]+$/.test(cleanRef)) {
     return { isValid: false, message: 'Reference contains invalid characters' };

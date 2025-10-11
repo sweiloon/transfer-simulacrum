@@ -591,6 +591,16 @@ const TransferLoading = () => {
     }
   };
 
+  const decodeHtml = (value?: string | null) => {
+    if (!value) return "";
+    return value
+      .replace(/&amp;/g, "&")
+      .replace(/&#x27;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">");
+  };
+
   if (isCIMB) {
     const statusMeta = getCimbStatusMeta(transferData.transactionStatus);
     const formattedTimestamp = formatCimbTimestamp(
@@ -669,29 +679,31 @@ const TransferLoading = () => {
             </div>
 
             <section className="rounded-2xl border border-[#dedede] overflow-hidden shadow-sm bg-white">
-              <div className="flex flex-col lg:flex-row justify-between gap-4 bg-[#f1f1f1] px-6 py-5 text-sm">
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2 text-[#b71d1d] font-semibold">
-                    <span className="flex items-center justify-center h-6 w-6 rounded-full bg-white shadow-inner">
-                      {statusMeta.icon}
-                    </span>
-                    {statusMeta.label}
-                    <span className="text-[#444] font-normal">Ref</span>
-                    <span className="font-mono text-[#444]">
-                      {transferData.transactionId || "—"}
-                    </span>
-                  </div>
-                  <p className="text-[#555]">
-                    {transferData.processingReason || statusMeta.description}
-                  </p>
-                  {transferData.recipientReference && (
-                    <p className="text-[#777] text-sm">
-                      [{transferData.recipientReference}]
+              <div className="bg-[#f1f1f1] px-6 py-5 text-sm">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2 text-[#b71d1d] font-semibold">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-white shadow-inner">
+                        {statusMeta.icon}
+                      </span>
+                      <span className="uppercase tracking-wide">{statusMeta.label}</span>
+                      <span className="text-[#555] font-normal">Ref</span>
+                      <span className="font-semibold text-[#222] font-mono">
+                        {transferData.transactionId || "—"}
+                      </span>
+                    </div>
+                    <p className="text-[#444] italic">
+                      {decodeHtml(transferData.processingReason || statusMeta.description)}
                     </p>
-                  )}
-                </div>
-                <div className="text-sm text-[#444] font-medium">
-                  {formattedTimestamp}
+                    {transferData.recipientReference && (
+                      <p className="text-[#777] text-xs">
+                        [{decodeHtml(transferData.recipientReference)}]
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-sm text-[#444] font-medium whitespace-nowrap">
+                    {formattedTimestamp}
+                  </div>
                 </div>
               </div>
 
@@ -723,6 +735,9 @@ const TransferLoading = () => {
                           <div>
                             <p className="uppercase text-xs tracking-[0.18em] text-[#777]">
                               Recipient Bank
+                            </p>
+                            <p className="font-medium text-sm text-[#333]">
+                              {transferData.recipientBank}
                             </p>
                           </div>
                         )}
@@ -791,7 +806,7 @@ const TransferLoading = () => {
                           Processing Reason
                         </p>
                         <p className="mt-2 text-[#333]">
-                          {transferData.processingReason}
+                          {decodeHtml(transferData.processingReason)}
                         </p>
                       </div>
                     )}
@@ -809,36 +824,33 @@ const TransferLoading = () => {
               </div>
             </section>
 
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="rounded-2xl border border-[#f0e9c5] bg-[#fdf7d7] p-6 space-y-3">
-                <p className="uppercase text-xs tracking-[0.18em] text-[#777]">
+            <section className="rounded-2xl border border-[#efe7c7] bg-[#fbf6d9] px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-[#111] uppercase tracking-[0.12em]">
                   Available Balance After Transaction
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-[#c21d16] text-white flex items-center justify-center text-lg font-semibold">
+                  <div className="h-12 w-12 rounded bg-[#c21d16] text-white flex items-center justify-center text-lg font-semibold">
                     C
                   </div>
-                  <div className="space-y-1 text-sm text-[#333]">
-                    <p className="font-semibold text-[#111]">
-                      {transferData.payFromAccount || "Account not specified"}
+                  <div className="text-sm text-[#111] space-y-1">
+                    <p className="font-semibold uppercase">BASIC SA WITHOUT FEE</p>
+                    <p className="font-mono text-xs text-[#333]">
+                      7076892134 <span className="font-semibold">MYR 230,342.68</span>
                     </p>
-                    <p className="font-mono text-xs text-[#666]">
-                      {accountWithHyphen}
-                    </p>
-                    <p className="text-xs text-[#666]">Not available</p>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#f0e9c5] bg-white p-6 space-y-3">
-                <p className="uppercase text-xs tracking-[0.18em] text-[#777]">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-[#111] uppercase tracking-[0.12em]">
                   Next Steps
                 </p>
-                <div className="space-y-2 text-sm font-semibold text-[#c21d16]">
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 text-sm font-semibold text-[#c21d16]">
                   <button
                     type="button"
                     onClick={() => navigate("/")}
-                    className="flex items-center gap-2 hover:text-[#a5150f] transition"
+                    className="inline-flex items-center gap-2 hover:text-[#a5150f] transition"
                   >
                     <span>↻</span>
                     <span>Make Another Transfer</span>
@@ -846,7 +858,7 @@ const TransferLoading = () => {
                   <button
                     type="button"
                     onClick={() => navigate("/transfer-history")}
-                    className="flex items-center gap-2 hover:text-[#a5150f] transition"
+                    className="inline-flex items-center gap-2 hover:text-[#a5150f] transition"
                   >
                     <span>💳</span>
                     <span>Go to My Accounts</span>
