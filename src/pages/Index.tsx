@@ -259,12 +259,20 @@ const Index = () => {
         const sanitizedTransferData = sanitizeTransferData(transferData);
 
         try {
+          console.log('🚀 Attempting to save transfer:', sanitizedTransferData);
+
           // Save transfer to history
-          await addTransfer(sanitizedTransferData);
-          
+          const result = await addTransfer(sanitizedTransferData);
+
+          if (result) {
+            console.log('✅ Transfer saved successfully with ID:', result);
+          } else {
+            console.log('❌ Transfer save returned null/undefined');
+          }
+
           // Store transfer data in localStorage to access on loading page
           safeLocalStorage.setJSON('transferData', sanitizedTransferData);
-          
+
           // Navigate to Maybank-specific page if Maybank is selected
           if (sanitizedTransferData.bank === 'Maybank Berhad') {
             navigate('/maybank-transfer');
@@ -272,10 +280,10 @@ const Index = () => {
             navigate('/transfer-loading');
           }
         } catch (error) {
-          console.error('Error saving transfer:', error);
+          console.error('❌ Error saving transfer:', error);
           // Still navigate even if saving fails
           safeLocalStorage.setJSON('transferData', sanitizedTransferData);
-          
+
           if (sanitizedTransferData.bank === 'Maybank Berhad') {
             navigate('/maybank-transfer');
           } else {

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { safeLocalStorage } from "@/utils/storage";
 import { formatCurrency } from "@/utils/currency";
@@ -23,24 +23,53 @@ const MaybankTransfer = () => {
   const navigate = useNavigate();
   const [transferData, setTransferData] = useState<TransferData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const storedData = safeLocalStorage.getJSON<TransferData>("transferData");
+    const storedData = safeLocalStorage.getJSON<Partial<TransferData>>("transferData");
     if (storedData) {
-      setTransferData(storedData);
+      // Convert stored data to proper format
+      const formattedData: TransferData = {
+        bank: storedData.bank || '',
+        name: storedData.name || '',
+        account: storedData.account || '',
+        amount: storedData.amount || '',
+        currency: storedData.currency || 'RM',
+        type: storedData.type || '',
+        payFromAccount: storedData.payFromAccount || '',
+        transferMode: storedData.transferMode || '',
+        recipientReference: storedData.recipientReference || '',
+        recipientBank: storedData.recipientBank || '',
+        effectiveDate: storedData.effectiveDate ? new Date(storedData.effectiveDate) : new Date()
+      };
+      setTransferData(formattedData);
     } else {
       navigate("/");
     }
   }, [navigate]);
 
   const handleTransfer = () => {
+    if (isLoading) return;
     setIsLoading(true);
+
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
+
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      setIsLoading(false);
+      loadingTimeoutRef.current = null;
+    }, 4000);
   };
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isLoading) {
         setIsLoading(false);
+        if (loadingTimeoutRef.current) {
+          clearTimeout(loadingTimeoutRef.current);
+          loadingTimeoutRef.current = null;
+        }
       }
     };
 
@@ -49,6 +78,14 @@ const MaybankTransfer = () => {
       document.removeEventListener("keydown", handleEscKey);
     };
   }, [isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!transferData) {
     return null;

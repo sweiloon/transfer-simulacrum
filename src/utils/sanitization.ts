@@ -17,19 +17,22 @@ export const sanitizeHtml = (str: string): string => {
 
 export const sanitizeTransferData = (data: any): any => {
   const sanitized = { ...data };
-  
+
   // Sanitize string fields
   Object.keys(sanitized).forEach(key => {
-    if (typeof sanitized[key] === 'string') {
+    if (typeof sanitized[key] === 'string' && sanitized[key] !== null && sanitized[key] !== undefined) {
       sanitized[key] = sanitizeHtml(sanitized[key].trim());
     }
   });
-  
+
   return sanitized;
 };
 
 export const validateTransferAmount = (amount: string): { isValid: boolean; message?: string } => {
   // First sanitize the input
+  if (!amount || typeof amount !== 'string') {
+    return { isValid: false, message: 'Amount is required' };
+  }
   const cleanAmount = amount.trim();
   
   if (!cleanAmount) {

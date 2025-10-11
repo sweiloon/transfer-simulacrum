@@ -28,79 +28,246 @@ interface TransferData {
   transactionStatus: string;
   startingPercentage: string;
   processingReason: string;
+  recipientBank?: string;
 }
 
-const bankStyles = {
+type BankStyle = {
+  primary: string;
+  bg: string;
+  text: string;
+  accent: string;
+  logo: string;
+};
+
+const defaultStyle: BankStyle = {
+  primary: 'from-slate-500 to-slate-700',
+  bg: 'bg-slate-50',
+  text: 'text-slate-800',
+  accent: 'border-slate-300',
+  logo: '/lovable-uploads/c89bdd41-48aa-430e-ac63-da848e1e15cc.png'
+};
+
+const styleOverrides: Partial<Record<string, Omit<BankStyle, 'logo'>>> = {
   'Maybank Berhad': {
     primary: 'from-yellow-400 to-yellow-500',
     bg: 'bg-yellow-50',
     text: 'text-yellow-800',
-    accent: 'border-yellow-300',
-    logo: '/lovable-uploads/323134fd-5e09-4850-a809-6dca1be6efb3.png'
+    accent: 'border-yellow-300'
   },
   'CIMB Bank Berhad': {
     primary: 'from-red-600 to-red-700',
     bg: 'bg-red-50',
     text: 'text-red-800',
-    accent: 'border-red-300',
-    logo: '/lovable-uploads/0818f65c-7b2b-46fe-8732-791fec36b4d7.png'
+    accent: 'border-red-300'
   },
   'Public Bank Berhad': {
     primary: 'from-red-500 to-red-600',
     bg: 'bg-red-50',
     text: 'text-red-800',
-    accent: 'border-red-300',
-    logo: '/lovable-uploads/ecbb9495-68b7-48b9-a9fa-d8ecdde97534.png'
+    accent: 'border-red-300'
   },
   'RHB Bank Berhad': {
     primary: 'from-blue-600 to-blue-700',
     bg: 'bg-blue-50',
     text: 'text-blue-800',
-    accent: 'border-blue-300',
-    logo: '/lovable-uploads/5df8f1ad-9209-4506-b668-41afc7d9eb84.png'
+    accent: 'border-blue-300'
   },
   'Hong Leong Bank Berhad': {
     primary: 'from-blue-800 to-blue-900',
     bg: 'bg-blue-50',
     text: 'text-blue-900',
-    accent: 'border-blue-300',
-    logo: '/lovable-uploads/0054d41f-519d-43ab-b31a-d772b0a6f9f4.png'
+    accent: 'border-blue-300'
   },
   'AmBank (M) Berhad': {
     primary: 'from-red-500 to-yellow-400',
     bg: 'bg-orange-50',
     text: 'text-red-700',
-    accent: 'border-orange-300',
-    logo: '/lovable-uploads/3f32e493-ecda-4a9a-8bec-a69fc75806af.png'
+    accent: 'border-orange-300'
   },
   'Bank Islam Malaysia Berhad': {
     primary: 'from-pink-600 to-pink-700',
     bg: 'bg-pink-50',
     text: 'text-pink-800',
-    accent: 'border-pink-300',
-    logo: '/lovable-uploads/b8280e5a-f849-4a72-9355-e2fadbe41075.png'
+    accent: 'border-pink-300'
   },
   'Bank Kerjasama Rakyat Malaysia Berhad (Bank Rakyat)': {
     primary: 'from-blue-600 to-orange-500',
     bg: 'bg-blue-50',
     text: 'text-blue-800',
-    accent: 'border-blue-300',
-    logo: '/lovable-uploads/46561530-bef1-4f4f-8014-9f58b414430b.png'
+    accent: 'border-blue-300'
   },
   'United Overseas Bank (Malaysia) Bhd (UOB Malaysia)': {
     primary: 'from-blue-800 to-blue-900',
     bg: 'bg-blue-50',
     text: 'text-blue-900',
-    accent: 'border-blue-300',
-    logo: '/lovable-uploads/94bd47e5-b594-4d2f-962d-ed4f3896a330.png'
+    accent: 'border-blue-300'
+  },
+  'United Oversea Bank(Malaysia)Bhd': {
+    primary: 'from-blue-800 to-blue-900',
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    accent: 'border-blue-300'
   },
   'OCBC Bank (Malaysia) Berhad': {
     primary: 'from-red-500 to-red-600',
     bg: 'bg-red-50',
     text: 'text-red-800',
-    accent: 'border-red-300',
-    logo: '/lovable-uploads/5621d47e-a40e-4bb3-9479-6c3c84d66151.png'
+    accent: 'border-red-300'
+  },
+  'OCBC Bank Berhad': {
+    primary: 'from-red-500 to-red-600',
+    bg: 'bg-red-50',
+    text: 'text-red-800',
+    accent: 'border-red-300'
+  },
+  'AEON Bank (M) Berhad': {
+    primary: 'from-purple-500 to-purple-700',
+    bg: 'bg-purple-50',
+    text: 'text-purple-800',
+    accent: 'border-purple-300'
+  },
+  'Agrobank': {
+    primary: 'from-rose-500 to-rose-700',
+    bg: 'bg-rose-50',
+    text: 'text-rose-800',
+    accent: 'border-rose-300'
+  },
+  'Affin Bank Berhad': {
+    primary: 'from-blue-500 to-blue-700',
+    bg: 'bg-blue-50',
+    text: 'text-blue-800',
+    accent: 'border-blue-300'
+  },
+  'Alliance Bank Malaysia Berhad': {
+    primary: 'from-indigo-500 to-indigo-700',
+    bg: 'bg-indigo-50',
+    text: 'text-indigo-800',
+    accent: 'border-indigo-300'
+  },
+  'Bangkok Bank Berhad': {
+    primary: 'from-blue-700 to-blue-900',
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    accent: 'border-blue-300'
+  },
+  'Bank Muamalat Malaysia Bhd': {
+    primary: 'from-orange-500 to-orange-600',
+    bg: 'bg-orange-50',
+    text: 'text-orange-700',
+    accent: 'border-orange-300'
+  },
+  'Bank Simpanan Nasional Berhad': {
+    primary: 'from-blue-500 to-blue-700',
+    bg: 'bg-blue-50',
+    text: 'text-blue-800',
+    accent: 'border-blue-300'
+  },
+  'Boost Bank Berhad': {
+    primary: 'from-red-500 to-red-600',
+    bg: 'bg-red-50',
+    text: 'text-red-800',
+    accent: 'border-red-300'
+  },
+  'Citibank Berhad': {
+    primary: 'from-sky-500 to-sky-700',
+    bg: 'bg-sky-50',
+    text: 'text-sky-800',
+    accent: 'border-sky-300'
+  },
+  'Deutsche Bank (Malaysia) Berhad': {
+    primary: 'from-blue-500 to-blue-700',
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    accent: 'border-blue-300'
+  },
+  'GX BANK BERHAD': {
+    primary: 'from-teal-500 to-teal-700',
+    bg: 'bg-teal-50',
+    text: 'text-teal-800',
+    accent: 'border-teal-300'
+  },
+  'HSBC Bank Malaysia Berhad': {
+    primary: 'from-red-500 to-gray-700',
+    bg: 'bg-gray-50',
+    text: 'text-gray-800',
+    accent: 'border-gray-300'
+  },
+  'Standard Chartered Bank Malaysia Berhad': {
+    primary: 'from-emerald-500 to-blue-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-800',
+    accent: 'border-emerald-300'
   }
+};
+
+const bankLogos: Record<string, string> = {
+  'Maybank Berhad': '/lovable-uploads/323134fd-5e09-4850-a809-6dca1be6efb3.png',
+  'CIMB Bank Berhad': '/lovable-uploads/0818f65c-7b2b-46fe-8732-791fec36b4d7.png',
+  'Public Bank Berhad': '/lovable-uploads/ecbb9495-68b7-48b9-a9fa-d8ecdde97534.png',
+  'RHB Bank Berhad': '/lovable-uploads/5df8f1ad-9209-4506-b668-41afc7d9eb84.png',
+  'AmBank (M) Berhad': '/lovable-uploads/ambank.png',
+  'Bank Islam Malaysia Berhad': '/lovable-uploads/b8280e5a-f849-4a72-9355-e2fadbe41075.png',
+  'Bank Kerjasama Rakyat Malaysia Berhad (Bank Rakyat)': '/lovable-uploads/bankkerjasamarakyat.png',
+  'United Oversea Bank(Malaysia)Bhd': '/lovable-uploads/94bd47e5-b594-4d2f-962d-ed4f3896a330.png',
+  'United Overseas Bank (Malaysia) Bhd (UOB Malaysia)': '/lovable-uploads/94bd47e5-b594-4d2f-962d-ed4f3896a330.png',
+  'OCBC Bank (Malaysia) Berhad': '/lovable-uploads/5621d47e-a40e-4bb3-9479-6c3c84d66151.png',
+  'AEON Bank (M) Berhad': '/lovable-uploads/aeonbank.png',
+  'Agrobank': '/lovable-uploads/agrobank.png',
+  'Affin Bank Berhad': '/lovable-uploads/affinbank.png',
+  'Al-Rajhi Banking & Investment Corporation (Malaysia) Berhad': '/lovable-uploads/aiajhibank.png',
+  'Alliance Bank Malaysia Berhad': '/lovable-uploads/alliancebank.png',
+  'Axiata Digital Ecode Sdn Bhd - Boost (Non-Bank)': '/lovable-uploads/boostbank.png',
+  'Bangkok Bank Berhad': '/lovable-uploads/bangkokbank.png',
+  'Bank Muamalat Malaysia Bhd': '/lovable-uploads/bankmualamat.png',
+  'Bank Simpanan Nasional Berhad': '/lovable-uploads/banksimpanan.png',
+  'Bank of America (M) Berhad': '/lovable-uploads/bankofamerica.png',
+  'Bank of China (M) Berhad': '/lovable-uploads/bankofchina.png',
+  'Beez Fintech Sdn Bhd (Non-Bank)': '/lovable-uploads/beezfintech.png',
+  'BigPay Malaysia Sdn Bhd (Non-Bank)': '/lovable-uploads/bigpay.png',
+  'BNP Paribas Malaysia Berhad': '/lovable-uploads/bnpparibas.png',
+  'Boost Bank Berhad': '/lovable-uploads/boostbank.png',
+  'CCBM CHINA CONSTRUCTION BANK': '/lovable-uploads/ccbmchina.png',
+  'China Construction Bank (Malaysia) Berhad': '/lovable-uploads/chinaconstructionbank.png',
+  'Citibank Berhad': '/lovable-uploads/citibank.png',
+  'Co-opbank Pertama': '/lovable-uploads/coopbank.png',
+  'Deutsche Bank (Malaysia) Berhad': '/lovable-uploads/deutschebank.png',
+  'Fass Payment Solutions Sdn Bhd (Non-Bank)': '/lovable-uploads/fasspay.png',
+  'Fave Asia Technologies Snd Bhd (Non-Bank)': '/lovable-uploads/faveasia.png',
+  'Finexus Cards Sdn Bhd (Non-Bank)': '/lovable-uploads/finexus.png',
+  'GHL Cardpay Sdn Bhd (Non-Bank)': '/lovable-uploads/ghlcard.png',
+  'Gpay Network (M) Sdn Bhd - Grab (Non-Bank)': '/lovable-uploads/gpay.png',
+  'GX BANK BERHAD': '/lovable-uploads/gxbank.png',
+  'HSBC Bank Malaysia Berhad': '/lovable-uploads/hsbcbank.png',
+  'Industrial and Commercial Bank of China (M) Berhad': '/lovable-uploads/industrialandcommercialbankchina.png',
+  'IPAY88 (M) Sdn Bhd (Non-Bank)': '/lovable-uploads/ipay88.png',
+  'JP Morgan Chase Bank Berhad': '/lovable-uploads/jpmorgan.png',
+  'KAF Digital Bank Berhad': '/lovable-uploads/kafdigitalbank.png',
+  'Kuwait Finance House': '/lovable-uploads/kuwaitfinance.png',
+  'MBSB Bank Berhad': '/lovable-uploads/mbsbbank.png',
+  'Merchanttrade Asia Sdn Bhd (Non-Bank)': '/lovable-uploads/merchanttrade.jpg',
+  'Mizuho Bank (Malaysia) Berhad': '/lovable-uploads/mizuho.png',
+  'MobilityOne Sdn Bhd (Non-Bank)': '/lovable-uploads/merchanttrade.jpg',
+  'MUFG Bank (Malaysia) Berhad': '/lovable-uploads/bankofamerica.png',
+  'OCBC Bank Berhad': '/lovable-uploads/5621d47e-a40e-4bb3-9479-6c3c84d66151.png',
+  'Payex PLT (Non-Bank)': '/lovable-uploads/merchanttrade.jpg',
+  'Razer Merchant Services Sdn Bhd (Non-Bank)': '/lovable-uploads/razerpay.svg',
+  'Revenue Solution Sdn Bhd (Non-Bank)': '/lovable-uploads/finexus.png',
+  'Ryt Bank': '/lovable-uploads/rytbank.png',
+  'Setel Pay Sdn Bhd (Non-Bank)': '/lovable-uploads/beezfintech.png',
+  'ShopeePay (Non-Bank)': '/lovable-uploads/shopeepay.png',
+  'SiliconNet Technologies Sdn Bhd (Non-Bank)': '/lovable-uploads/finexus.png',
+  'Standard Chartered Bank Malaysia Berhad': '/lovable-uploads/standardcharteres.png',
+  'Sumitomo Mitsui Banking Corporation (M) Berhad': '/lovable-uploads/mizuho.png',
+  'TNG Digital - Touch\'n GO (Non-Bank)': '/lovable-uploads/tngdigital.jpg'
+};
+
+const getBankStyle = (bank: string): BankStyle => {
+  const override = styleOverrides[bank];
+  const logo = bankLogos[bank] || defaultStyle.logo;
+  if (override) {
+    return { ...defaultStyle, ...override, logo };
+  }
+  return { ...defaultStyle, logo };
 };
 
 const TransferLoading = () => {
@@ -160,14 +327,17 @@ const TransferLoading = () => {
     navigate('/');
   };
 
-  const formatDateTime = (date: Date, time: string) => {
+  const formatDateTime = (date: Date, time: string, bank?: string) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}T${time}:00`;
+    if (bank?.toLowerCase() === 'maybank berhad') {
+      return `${year}-${month}-${day}T${time}:00`;
+    }
+    return `${year}-${month}-${day} ${time}`;
   };
 
-  const getStatusIcon = (status: string, style: any) => {
+  const getStatusIcon = (status: string, style: BankStyle) => {
     switch (status) {
       case 'Cancelled':
         return <XCircle className={`w-24 h-24 ${style.text}`} />;
@@ -198,11 +368,11 @@ const TransferLoading = () => {
     }
   };
 
-  const getProgressSteps = (status: string, progress: number) => {
+  const getProgressSteps = (status: string, progress: number, style: BankStyle) => {
     switch (status) {
       case 'Cancelled':
         return (
-          <div className={`text-sm ${transferData && bankStyles[transferData.bank as keyof typeof bankStyles]?.text} space-y-1`}>
+          <div className={`text-sm ${style.text} space-y-1`}>
             <div className="flex justify-between">
               <span>✗ Transaction cancelled</span>
               <span>Cancelled</span>
@@ -219,7 +389,7 @@ const TransferLoading = () => {
         );
       case 'Successful':
         return (
-          <div className={`text-sm ${transferData && bankStyles[transferData.bank as keyof typeof bankStyles]?.text} space-y-1`}>
+          <div className={`text-sm ${style.text} space-y-1`}>
             <div className="flex justify-between">
               <span>✓ Validating account details</span>
               <span>Complete</span>
@@ -243,7 +413,7 @@ const TransferLoading = () => {
       case 'Processing':
       default:
         return (
-          <div className={`text-sm ${transferData && bankStyles[transferData.bank as keyof typeof bankStyles]?.text} space-y-1`}>
+          <div className={`text-sm ${style.text} space-y-1`}>
             <div className="flex justify-between">
               <span>✓ Validating account details</span>
               <span>Complete</span>
@@ -273,7 +443,7 @@ const TransferLoading = () => {
 
   if (!transferData) return null;
 
-  const style = bankStyles[transferData.bank as keyof typeof bankStyles] || bankStyles['Maybank Berhad'];
+  const style = getBankStyle(transferData.bank);
 
   return (
     <>
@@ -283,9 +453,9 @@ const TransferLoading = () => {
           <div className={`bg-gradient-to-r ${style.primary} text-white p-4 sm:p-6 lg:p-8 rounded-t-xl shadow-lg`}>
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
               <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                  <img 
-                    src={style.logo} 
+                <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-white rounded-xl shadow-md flex items-center justify-center">
+                  <img
+                    src={style.logo}
                     alt={`${transferData.bank} Logo`}
                     className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 object-contain"
                     onError={(e) => {
@@ -332,7 +502,7 @@ const TransferLoading = () => {
                   )}
                   
                   <div className="text-left">
-                    {getProgressSteps(transferData.transactionStatus, progress)}
+                    {getProgressSteps(transferData.transactionStatus, progress, style)}
                   </div>
                 </div>
               </CardContent>
@@ -348,22 +518,10 @@ const TransferLoading = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <label className="text-xs sm:text-sm font-medium text-gray-600">Bank</label>
-                      <div className="flex items-center gap-2 sm:gap-3 mt-1">
-                        <img 
-                          src={style.logo} 
-                          alt={`${transferData.bank} Logo`}
-                          className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 object-contain flex-shrink-0"
-                          onError={(e) => {
-                            // Fallback to generic bank icon if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                        <p className={`font-semibold ${style.text} text-xs sm:text-sm lg:text-base leading-tight`}>
-                          {transferData.bank}
-                        </p>
-                      </div>
+                      <label className="text-xs sm:text-sm font-medium text-gray-600">Recipient Bank</label>
+                      <p className={`font-semibold ${style.text} text-sm sm:text-base lg:text-lg mt-1`}>
+                        {transferData.recipientBank || transferData.bank}
+                      </p>
                     </div>
                     <div>
                       <label className="text-xs sm:text-sm font-medium text-gray-600">Transfer Type</label>
@@ -383,7 +541,11 @@ const TransferLoading = () => {
                   <div>
                     <label className="text-xs sm:text-sm font-medium text-gray-600">Date & Time</label>
                     <p className={`font-semibold ${style.text} font-mono text-sm sm:text-base lg:text-lg mt-1 break-all sm:break-normal`}>
-                      {formatDateTime(transferData.date, transferData.time)}
+                      {formatDateTime(
+                        transferData.date,
+                        transferData.time,
+                        transferData.recipientBank || transferData.bank
+                      )}
                     </p>
                   </div>
 
