@@ -60,6 +60,18 @@ const defaultStyle: BankStyle = {
   logo: "/lovable-uploads/c89bdd41-48aa-430e-ac63-da848e1e15cc.png",
 };
 
+// Decode HTML entities when rendering sanitized values
+function decodeHtml(value?: string | null): string {
+  if (!value) return "";
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x2F;/g, "/");
+}
+
 const styleOverrides: Partial<Record<string, Omit<BankStyle, "logo">>> = {
   "Maybank Berhad": {
     primary: "from-yellow-400 to-yellow-500",
@@ -590,16 +602,6 @@ const TransferLoading = () => {
             "Transfer is currently being processed. Please wait for completion.",
         };
     }
-  };
-
-  const decodeHtml = (value?: string | null) => {
-    if (!value) return "";
-    return value
-      .replace(/&amp;/g, "&")
-      .replace(/&#x27;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">");
   };
 
   if (isCIMB) {
