@@ -534,6 +534,7 @@ const TransferLoading = () => {
 
   const style = getBankStyle(transferData.bank);
   const isCIMB = transferData.bank === "CIMB Bank Berhad";
+  const decodedName = decodeHtml(transferData.name);
 
   const exitDialog = (
     <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
@@ -728,7 +729,7 @@ const TransferLoading = () => {
                             Recipient Name
                           </p>
                           <p className="font-semibold text-base text-[#111] uppercase">
-                            {transferData.name}
+                            {decodedName}
                           </p>
                         </div>
                         {transferData.recipientBank && (
@@ -1006,7 +1007,7 @@ const TransferLoading = () => {
                     <p
                       className={`font-semibold ${style.text} text-base sm:text-lg lg:text-xl mt-1`}
                     >
-                      {transferData.name}
+                      {decodedName}
                     </p>
                   </div>
 

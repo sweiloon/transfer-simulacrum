@@ -19,6 +19,17 @@ interface TransferData {
   recipientBank: string;
 }
 
+const decodeHtml = (value?: string | null): string => {
+  if (!value) return "";
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x2F;/g, "/");
+};
+
 const MaybankTransfer = () => {
   const navigate = useNavigate();
   const [transferData, setTransferData] = useState<TransferData | null>(null);
@@ -91,6 +102,9 @@ const MaybankTransfer = () => {
     return null;
   }
 
+  const decodedName = decodeHtml(transferData.name);
+  const decodedReference = decodeHtml(transferData.recipientReference);
+
   return (
     <div
       className="min-h-screen relative"
@@ -146,7 +160,7 @@ const MaybankTransfer = () => {
                   style={{ fontSize: "15px" }}
                 >
                   Transfer To{" "}
-                  <span className="font-bold">{transferData.name}</span>
+                  <span className="font-bold">{decodedName}</span>
                 </div>
                 <div className="text-gray-600" style={{ fontSize: "13px" }}>
                   {transferData.account}
@@ -230,7 +244,7 @@ const MaybankTransfer = () => {
                   Recipient Reference
                 </span>
                 <span className="text-gray-500 text-sm">
-                  {transferData.recipientReference || "cola"}
+                  {decodedReference || "cola"}
                 </span>
               </div>
             </div>
