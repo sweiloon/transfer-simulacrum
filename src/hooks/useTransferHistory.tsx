@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { sanitizeTransferData, validateTransferAmount } from '@/utils/sanitization';
+import { validateTransferAmount } from '@/utils/sanitization';
 
 export interface TransferHistoryItem {
   id: string;
@@ -107,16 +107,10 @@ export const useTransferHistory = () => {
       }
       console.log('✅ Amount validation passed');
 
-      // Sanitize transfer data
-      let sanitizedData: any;
-      try {
-        sanitizedData = sanitizeTransferData(transferData);
-        console.log('🧼 Sanitized data:', sanitizedData);
-      } catch (sanitizeError) {
-        console.error('❌ Error during data sanitization:', sanitizeError);
-        console.log('📝 Original data that caused error:', transferData);
-        return null;
-      }
+      // Note: Data should already be sanitized by the caller (Index.tsx)
+      // We use the data as-is to avoid double-encoding issues
+      const sanitizedData = transferData;
+      console.log('📝 Transfer data received:', sanitizedData);
 
       // Validate required fields
       if (!sanitizedData.bank) {

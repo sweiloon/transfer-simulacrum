@@ -2,6 +2,33 @@
  * Data sanitization utilities to prevent XSS and injection attacks
  */
 
+/**
+ * Decode HTML entities from a string.
+ * Handles multi-level encoding by looping until no more changes occur.
+ * This is useful for data that may have been accidentally double or triple encoded.
+ */
+export const decodeHtml = (value?: string | null): string => {
+  if (!value) return "";
+
+  let decoded = value;
+  let previous = "";
+
+  // Loop until no more changes occur (handles multi-level encoding)
+  while (decoded !== previous) {
+    previous = decoded;
+    decoded = decoded
+      .replace(/&amp;/g, "&")
+      .replace(/&#x27;/g, "'")
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&#x2F;/g, "/");
+  }
+
+  return decoded;
+};
+
 export const sanitizeHtml = (str: string): string => {
   const map: { [key: string]: string } = {
     '&': '&amp;',

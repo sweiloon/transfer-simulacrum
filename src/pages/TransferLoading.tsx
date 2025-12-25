@@ -13,6 +13,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { safeLocalStorage } from "@/utils/storage";
 import { formatCurrency } from "@/utils/currency";
+import { decodeHtml } from "@/utils/sanitization";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,18 +60,6 @@ const defaultStyle: BankStyle = {
   accent: "border-slate-300",
   logo: "/lovable-uploads/c89bdd41-48aa-430e-ac63-da848e1e15cc.png",
 };
-
-// Decode HTML entities when rendering sanitized values
-function decodeHtml(value?: string | null): string {
-  if (!value) return "";
-  return value
-    .replace(/&amp;/g, "&")
-    .replace(/&#x27;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&#x2F;/g, "/");
-}
 
 const styleOverrides: Partial<Record<string, Omit<BankStyle, "logo">>> = {
   "Maybank Berhad": {
@@ -499,7 +488,7 @@ const TransferLoading = () => {
                     Processing Reason:
                   </div>
                   <div className="text-sm font-medium">
-                    {transferData.processingReason}
+                    {decodeHtml(transferData.processingReason)}
                   </div>
                 </div>
               )}
@@ -533,7 +522,7 @@ const TransferLoading = () => {
                     Processing Reason:
                   </div>
                   <div className="text-sm font-medium">
-                    {transferData.processingReason}
+                    {decodeHtml(transferData.processingReason)}
                   </div>
                 </div>
               )}
@@ -544,9 +533,19 @@ const TransferLoading = () => {
 
   if (!transferData) return null;
 
+  // Decode all text fields that may contain HTML entities
+  const decodedBank = decodeHtml(transferData.bank);
+  const decodedRecipientBank = decodeHtml(transferData.recipientBank);
+  const decodedName = decodeHtml(transferData.name);
+  const decodedType = decodeHtml(transferData.type);
+  const decodedProcessingReason = decodeHtml(transferData.processingReason);
+  const decodedTransactionId = decodeHtml(transferData.transactionId);
+  const decodedRecipientReference = decodeHtml(transferData.recipientReference);
+  const decodedPayFromAccount = decodeHtml(transferData.payFromAccount);
+  const decodedTransferMode = decodeHtml(transferData.transferMode);
+
   const style = getBankStyle(transferData.bank);
   const isCIMB = transferData.bank === "CIMB Bank Berhad";
-  const decodedName = decodeHtml(transferData.name);
 
   const exitDialog = (
     <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
@@ -692,7 +691,7 @@ const TransferLoading = () => {
                       <span className="uppercase tracking-wide">{statusMeta.label}</span>
                       <span className="text-[#555] font-normal">Ref</span>
                       <span className="font-semibold text-[#222] font-mono">
-                        {transferData.transactionId || "—"}
+                        {decodedTransactionId || "—"}
                       </span>
                     </div>
                     <p className="text-[#444] italic">
@@ -740,7 +739,7 @@ const TransferLoading = () => {
                               Recipient Bank
                             </p>
                             <p className="font-medium text-sm text-[#333]">
-                              {transferData.recipientBank}
+                              {decodedRecipientBank}
                             </p>
                           </div>
                         )}
@@ -787,7 +786,7 @@ const TransferLoading = () => {
                         From
                       </p>
                       <p className="mt-2 font-semibold text-[#111]">
-                        {transferData.payFromAccount || "Account not specified"}
+                        {decodedPayFromAccount || "Account not specified"}
                       </p>
                       <p className="text-xs text-[#666] font-mono mt-1">
                         {accountWithHyphen}
@@ -798,8 +797,8 @@ const TransferLoading = () => {
                         Transfer Method
                       </p>
                       <p className="mt-2 font-semibold text-[#111]">
-                        {transferData.transferMode ||
-                          transferData.type ||
+                        {decodedTransferMode ||
+                          decodedType ||
                           "DuitNow Transfer"}
                       </p>
                     </div>
@@ -897,7 +896,7 @@ const TransferLoading = () => {
                 <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-white rounded-xl shadow-md flex items-center justify-center">
                   <img
                     src={style.logo}
-                    alt={`${transferData.bank} Logo`}
+                    alt={`${decodedBank} Logo`}
                     className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 object-contain"
                     onError={(e) => {
                       // Fallback to generic bank icon if image fails to load
@@ -987,7 +986,7 @@ const TransferLoading = () => {
                       <p
                         className={`font-semibold ${style.text} text-sm sm:text-base lg:text-lg mt-1`}
                       >
-                        {transferData.recipientBank || transferData.bank}
+                        {decodedRecipientBank || decodedBank}
                       </p>
                     </div>
                     <div>
@@ -997,7 +996,7 @@ const TransferLoading = () => {
                       <p
                         className={`font-semibold ${style.text} text-sm sm:text-base lg:text-lg mt-1`}
                       >
-                        {transferData.type}
+                        {decodedType}
                       </p>
                     </div>
                   </div>

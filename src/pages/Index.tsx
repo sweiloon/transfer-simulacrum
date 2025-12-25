@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTransferHistory } from '@/hooks/useTransferHistory';
 import { safeLocalStorage } from '@/utils/storage';
-import { validateTransferAmount, validateAccountNumber, validateRecipientName, validateReference, sanitizeTransferData } from '@/utils/sanitization';
+import { validateTransferAmount, validateAccountNumber, validateRecipientName, validateReference, sanitizeTransferData, decodeHtml } from '@/utils/sanitization';
 import { formatCurrencyInput, parseCurrency } from '@/utils/currency';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
@@ -341,18 +341,20 @@ const Index = () => {
     const editData = safeLocalStorage.getJSON<any>('editTransferData');
     if (editData) {
       try {
+        // Decode string fields that may have been HTML-encoded in the database
         const updatedData = {
           ...editData,
+          name: decodeHtml(editData.name),
           date: new Date(editData.date),
           effectiveDate: new Date(editData.effective_date || editData.effectiveDate),
           transactionStatus: editData.transaction_status || editData.transactionStatus,
           startingPercentage: editData.starting_percentage || editData.startingPercentage,
-          transactionId: editData.transaction_id || editData.transactionId,
-          recipientReference: editData.recipient_reference || editData.recipientReference,
+          transactionId: decodeHtml(editData.transaction_id || editData.transactionId),
+          recipientReference: decodeHtml(editData.recipient_reference || editData.recipientReference),
           payFromAccount: editData.pay_from_account || editData.payFromAccount,
           transferMode: editData.transfer_mode || editData.transferMode,
           recipientBank: editData.recipient_bank || editData.recipientBank,
-          processingReason: editData.processing_reason || editData.processingReason || ''
+          processingReason: decodeHtml(editData.processing_reason || editData.processingReason || '')
         };
         setTransferData(updatedData);
         

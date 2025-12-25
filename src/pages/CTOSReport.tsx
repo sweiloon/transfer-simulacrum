@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { safeLocalStorage } from '@/utils/storage';
+import { decodeHtml } from '@/utils/sanitization';
 
 interface CTOSData {
   name: string;
@@ -35,16 +36,6 @@ const CTOSReport = () => {
     document.addEventListener('keydown', handleKeyPress);
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [navigate]);
-
-  const decodeHtml = (value: string) =>
-    value
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&#x2F;/g, '/')
-      .replace(/&#x27;/g, "'");
 
   const displayValue = (value?: string | null) => {
     if (!value) return '-';

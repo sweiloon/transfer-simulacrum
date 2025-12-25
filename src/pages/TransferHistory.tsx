@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { safeLocalStorage } from '@/utils/storage';
 import { formatCurrency } from '@/utils/currency';
+import { decodeHtml } from '@/utils/sanitization';
 
 const TransferHistory = () => {
   const { transfers, deleteTransfer, isLoading: transfersLoading } = useTransferHistory();
@@ -127,7 +128,7 @@ const TransferHistory = () => {
                     <div className="flex items-center gap-3">
                       <Building2 className="h-5 w-5 text-primary" />
                       <div>
-                        <CardTitle className="text-lg">{transfer.bank}</CardTitle>
+                        <CardTitle className="text-lg">{decodeHtml(transfer.bank)}</CardTitle>
                         <CardDescription className="flex items-center gap-2">
                           <Calendar className="h-3 w-3" />
                           {format(transfer.created_at, 'PPP')}
@@ -183,7 +184,7 @@ const TransferHistory = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-muted-foreground">Transferer:</span>
-                      <p className="text-foreground">{transfer.name}</p>
+                      <p className="text-foreground">{decodeHtml(transfer.name)}</p>
                     </div>
                     <div>
                       <span className="font-medium text-muted-foreground">Amount:</span>
@@ -198,19 +199,19 @@ const TransferHistory = () => {
                     {transfer.type && (
                       <div>
                         <span className="font-medium text-muted-foreground">Type:</span>
-                        <p className="text-foreground">{transfer.type}</p>
+                        <p className="text-foreground">{decodeHtml(transfer.type)}</p>
                       </div>
                     )}
                     {transfer.recipient_bank && (
                       <div>
                         <span className="font-medium text-muted-foreground">Recipient Bank:</span>
-                        <p className="text-foreground">{transfer.recipient_bank}</p>
+                        <p className="text-foreground">{decodeHtml(transfer.recipient_bank)}</p>
                       </div>
                     )}
                     {transfer.transaction_id && (
                       <div>
                         <span className="font-medium text-muted-foreground">Transaction ID:</span>
-                        <p className="text-foreground font-mono">{transfer.transaction_id}</p>
+                        <p className="text-foreground font-mono">{decodeHtml(transfer.transaction_id)}</p>
                       </div>
                     )}
                   </div>
@@ -218,7 +219,7 @@ const TransferHistory = () => {
                   {transfer.recipient_reference && (
                     <div className="pt-2 border-t">
                       <span className="font-medium text-muted-foreground">Reference:</span>
-                      <p className="text-foreground">{transfer.recipient_reference}</p>
+                      <p className="text-foreground">{decodeHtml(transfer.recipient_reference)}</p>
                     </div>
                   )}
                   

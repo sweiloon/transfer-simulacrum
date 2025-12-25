@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { safeLocalStorage } from "@/utils/storage";
 import { formatCurrency } from "@/utils/currency";
+import { decodeHtml } from "@/utils/sanitization";
 
 interface TransferData {
   bank: string;
@@ -18,17 +19,6 @@ interface TransferData {
   recipientReference: string;
   recipientBank: string;
 }
-
-const decodeHtml = (value?: string | null): string => {
-  if (!value) return "";
-  return value
-    .replace(/&amp;/g, "&")
-    .replace(/&#x27;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&#x2F;/g, "/");
-};
 
 const MaybankTransfer = () => {
   const navigate = useNavigate();
@@ -102,8 +92,10 @@ const MaybankTransfer = () => {
     return null;
   }
 
+  // Decode all text fields that may contain HTML entities
   const decodedName = decodeHtml(transferData.name);
   const decodedReference = decodeHtml(transferData.recipientReference);
+  const decodedRecipientBank = decodeHtml(transferData.recipientBank);
 
   return (
     <div
@@ -196,7 +188,7 @@ const MaybankTransfer = () => {
                   Recipient's bank
                 </span>
                 <span className="text-gray-500 text-sm">
-                  {transferData.recipientBank || "PUBLIC BANK"}
+                  {decodedRecipientBank || "PUBLIC BANK"}
                 </span>
               </div>
               <div className="flex justify-between items-center">
