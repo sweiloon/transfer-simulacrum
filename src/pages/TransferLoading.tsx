@@ -263,6 +263,7 @@ const bankLogos: Record<string, string> = {
   "Gpay Network (M) Sdn Bhd - Grab (Non-Bank)": "/lovable-uploads/gpay.png",
   "GX BANK BERHAD": "/lovable-uploads/gxbank.png",
   "HSBC Bank Malaysia Berhad": "/lovable-uploads/hsbcbank.png",
+  "Hong Leong Bank Berhad": "/lovable-uploads/hongleong.png",
   "Industrial and Commercial Bank of China (M) Berhad":
     "/lovable-uploads/industrialandcommercialbankchina.png",
   "IPAY88 (M) Sdn Bhd (Non-Bank)": "/lovable-uploads/ipay88.png",
